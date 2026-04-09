@@ -1,101 +1,137 @@
-
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+<meta name="mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+<meta name="theme-color" content="#0c0c0c"/>
+<title>Discipline Reset</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,400&family=DM+Sans:wght@300;400;500&display=swap');
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;touch-action:manipulation}
-html{font-size:16px;-webkit-text-size-adjust:100%}
-body{font-family:'DM Sans',sans-serif;min-height:100dvh;overflow-x:hidden}
+html,body{width:100%;min-height:100dvh;overflow-x:hidden;font-family:'DM Sans',sans-serif;-webkit-text-size-adjust:100%}
 
-.page{
---green:#1D9E75;--green-dim:rgba(29,158,117,0.1);--green-mid:rgba(29,158,117,0.28);
---bg:#f5f2ec;--bg2:#ffffff;--bg3:#ece8e0;
---ink:#111111;--ink2:#555555;--ink3:#999999;
---border:rgba(0,0,0,0.08);--shadow:0 1px 4px rgba(0,0,0,0.06);
---hero-bg:#111111;--hero-txt:#ffffff;--hero-sub:#666666;
-background:var(--bg);color:var(--ink);
-width:100%;max-width:430px;margin:0 auto;padding:0 0 80px
+body{
+  --green:#1D9E75;
+  --green-dim:rgba(29,158,117,0.1);
+  --green-mid:rgba(29,158,117,0.28);
+  --bg:#f5f2ec;
+  --bg2:#ffffff;
+  --bg3:#ece8e0;
+  --ink:#111111;
+  --ink2:#555555;
+  --ink3:#999999;
+  --border:rgba(0,0,0,0.08);
+  --shadow:0 1px 4px rgba(0,0,0,0.06);
+  --hero-bg:#111111;
+  --hero-txt:#ffffff;
+  --hero-sub:#666666;
+  background:var(--bg);
+  color:var(--ink);
 }
 
-.page[data-theme=dark]{
---bg:#0c0c0c;--bg2:#1a1a1a;--bg3:#222222;
---ink:#f0ede7;--ink2:#aaaaaa;--ink3:#555555;
---border:rgba(255,255,255,0.07);--shadow:0 1px 6px rgba(0,0,0,0.5);
---hero-bg:#1a1a1a;--hero-txt:#f0ede7;--hero-sub:#555555;
-background:var(--bg)
+body.dark{
+  --bg:#0c0c0c;
+  --bg2:#1a1a1a;
+  --bg3:#222222;
+  --ink:#f0ede7;
+  --ink2:#aaaaaa;
+  --ink3:#555555;
+  --border:rgba(255,255,255,0.07);
+  --shadow:0 1px 6px rgba(0,0,0,0.5);
+  --hero-bg:#1a1a1a;
+  --hero-txt:#f0ede7;
+  --hero-sub:#555555;
 }
 
-.topbar{display:flex;justify-content:space-between;align-items:flex-start;padding:52px 20px 16px}
+.page{width:100%;max-width:480px;margin:0 auto;padding:0 0 90px}
+
+/* TOPBAR */
+.topbar{display:flex;justify-content:space-between;align-items:flex-start;padding:56px 20px 16px}
 .t-day{font-size:12px;color:var(--ink3);letter-spacing:0.04em}
-.t-date{font-family:'Playfair Display',serif;font-size:22px;font-weight:700;color:var(--ink);line-height:1.2;margin-top:2px}
-.t-right{display:flex;flex-direction:column;align-items:flex-end;gap:7px}
-.spill{background:var(--ink);color:var(--bg);font-size:11px;font-weight:500;letter-spacing:0.06em;padding:5px 12px;border-radius:99px;white-space:nowrap}
-.theme-row{display:flex;gap:5px}
-.tb{width:32px;height:32px;border-radius:9px;border:1px solid var(--border);background:var(--bg2);display:flex;align-items:center;justify-content:center;cursor:pointer}
+.t-date{font-family:'Playfair Display',serif;font-size:24px;font-weight:700;color:var(--ink);line-height:1.2;margin-top:2px}
+.t-right{display:flex;flex-direction:column;align-items:flex-end;gap:8px}
+.spill{background:var(--ink);color:var(--bg);font-size:11px;font-weight:500;letter-spacing:0.06em;padding:6px 14px;border-radius:99px;white-space:nowrap}
+.theme-row{display:flex;gap:6px}
+.tb{width:36px;height:36px;border-radius:10px;border:1px solid var(--border);background:var(--bg2);display:flex;align-items:center;justify-content:center;cursor:pointer}
 .tb.on{background:var(--green);border-color:var(--green)}
-.tb svg{width:15px;height:15px;stroke:var(--ink2);fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.tb svg{width:16px;height:16px;stroke:var(--ink2);fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
 .tb.on svg{stroke:#ffffff}
 
-.hero{margin:0 16px 14px;background:var(--hero-bg);border-radius:24px;padding:22px 20px 18px;position:relative;overflow:hidden}
-.h-ring{position:absolute;top:-44px;right:-44px;width:130px;height:130px;border-radius:50%;border:1px solid rgba(29,158,117,0.2)}
-.h-blob{position:absolute;top:-18px;right:-18px;width:72px;height:72px;border-radius:50%;background:rgba(29,158,117,0.14)}
-.h-blob2{position:absolute;bottom:-24px;left:-24px;width:80px;height:80px;border-radius:50%;background:rgba(29,158,117,0.06)}
+/* HERO */
+.hero{margin:0 16px 14px;background:var(--hero-bg);border-radius:24px;padding:24px 22px 20px;position:relative;overflow:hidden}
+.h-ring{position:absolute;top:-44px;right:-44px;width:140px;height:140px;border-radius:50%;border:1px solid rgba(29,158,117,0.2)}
+.h-blob{position:absolute;top:-18px;right:-18px;width:78px;height:78px;border-radius:50%;background:rgba(29,158,117,0.14)}
+.h-blob2{position:absolute;bottom:-28px;left:-28px;width:90px;height:90px;border-radius:50%;background:rgba(29,158,117,0.06)}
 .h-ey{font-size:10px;font-weight:500;letter-spacing:0.12em;color:var(--green);margin-bottom:10px}
-.h-title{font-family:'Playfair Display',serif;font-size:30px;font-weight:900;color:var(--hero-txt);line-height:1.1;margin-bottom:18px}
+.h-title{font-family:'Playfair Display',serif;font-size:32px;font-weight:900;color:var(--hero-txt);line-height:1.1;margin-bottom:20px}
 .h-title span{color:var(--green)}
 .hrow{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1px;background:rgba(255,255,255,0.07);border-radius:12px;overflow:hidden}
-.hcell{background:rgba(0,0,0,0.25);padding:11px 6px;text-align:center}
-.hcell-n{font-family:'Playfair Display',serif;font-size:20px;font-weight:700;color:var(--hero-txt)}
-.hcell-l{font-size:9px;color:var(--hero-sub);margin-top:1px;letter-spacing:0.07em}
+.hcell{background:rgba(0,0,0,0.3);padding:13px 8px;text-align:center}
+.hcell-n{font-family:'Playfair Display',serif;font-size:22px;font-weight:700;color:var(--hero-txt)}
+.hcell-l{font-size:9px;color:var(--hero-sub);margin-top:2px;letter-spacing:0.07em}
 
+/* PROMPT */
 .prompt{margin:0 16px 14px;background:var(--green-dim);border-left:3px solid var(--green);border-radius:0 14px 14px 0;padding:14px 16px}
-.p-ey{font-size:9px;font-weight:500;color:var(--green);letter-spacing:0.12em;margin-bottom:5px}
-.p-q{font-family:'Playfair Display',serif;font-size:14px;color:var(--ink);line-height:1.6;font-style:italic}
+.p-ey{font-size:9px;font-weight:500;color:var(--green);letter-spacing:0.12em;margin-bottom:6px}
+.p-q{font-family:'Playfair Display',serif;font-size:15px;color:var(--ink);line-height:1.6;font-style:italic}
 
-.sec{display:flex;justify-content:space-between;align-items:center;padding:0 20px;margin:18px 0 10px}
+/* SECTION HEAD */
+.sec{display:flex;justify-content:space-between;align-items:center;padding:0 20px;margin:20px 0 10px}
 .sec-l{font-size:10px;font-weight:500;letter-spacing:0.1em;color:var(--ink3)}
-.sec-r{font-size:11px;color:var(--green);font-weight:500}
+.sec-r{font-size:12px;color:var(--green);font-weight:500}
 
+/* HABITS */
 .hlist{display:flex;flex-direction:column;gap:8px;padding:0 16px}
-.habit{display:flex;align-items:center;gap:14px;background:var(--bg2);border:1px solid var(--border);border-radius:16px;padding:15px 16px;cursor:pointer;box-shadow:var(--shadow);transition:background 0.18s,border-color 0.18s}
+.habit{display:flex;align-items:center;gap:14px;background:var(--bg2);border:1px solid var(--border);border-radius:16px;padding:16px;cursor:pointer;box-shadow:var(--shadow);transition:background 0.18s,border-color 0.18s;user-select:none}
 .habit:active{opacity:0.82;transform:scale(0.985)}
 .habit.done{background:var(--green-dim);border-color:var(--green-mid)}
-.hc{width:24px;height:24px;border-radius:50%;border:1.5px solid var(--ink3);flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all 0.18s}
+.hc{width:26px;height:26px;border-radius:50%;border:1.5px solid var(--ink3);flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all 0.18s}
 .habit.done .hc{background:var(--green);border-color:var(--green)}
-.tick{width:11px;height:11px;opacity:0;transition:opacity 0.15s}
+.tick{width:12px;height:12px;opacity:0;transition:opacity 0.15s}
 .habit.done .tick{opacity:1}
 .hb{flex:1;min-width:0}
-.hn{font-size:15px;font-weight:500;color:var(--ink);line-height:1.2}
+.hn{font-size:16px;font-weight:500;color:var(--ink);line-height:1.2}
 .habit.done .hn{color:var(--green)}
-.hsb{font-size:12px;color:var(--ink3);margin-top:2px}
+.hsb{font-size:12px;color:var(--ink3);margin-top:3px}
 
+/* COURSE */
 .course{margin:14px 16px 0;background:var(--bg2);border:1px solid var(--border);border-radius:16px;padding:18px;box-shadow:var(--shadow)}
 .cs-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
 .cs-t{font-size:14px;font-weight:500;color:var(--ink)}
-.cs-pct{font-family:'Playfair Display',serif;font-size:22px;font-weight:700;color:var(--green)}
+.cs-pct{font-family:'Playfair Display',serif;font-size:24px;font-weight:700;color:var(--green)}
 .bar-bg{height:6px;background:var(--bg3);border-radius:99px;overflow:hidden;margin-bottom:14px}
 .bar-f{height:100%;background:var(--green);border-radius:99px;transition:width 0.5s}
 .cs-row{display:flex;gap:8px}
-.cs-inp{flex:1;min-width:0;height:44px;border:1px solid var(--border);border-radius:11px;padding:0 14px;font-size:14px;font-family:'DM Sans',sans-serif;background:var(--bg3);color:var(--ink);outline:none}
+.cs-inp{flex:1;min-width:0;height:48px;border:1px solid var(--border);border-radius:12px;padding:0 14px;font-size:15px;font-family:'DM Sans',sans-serif;background:var(--bg3);color:var(--ink);outline:none}
 .cs-inp:focus{border-color:var(--green)}
-.cs-btn{height:44px;padding:0 20px;background:var(--ink);color:var(--bg);border:none;border-radius:11px;font-size:14px;font-family:'DM Sans',sans-serif;font-weight:500;cursor:pointer;flex-shrink:0}
+.cs-btn{height:48px;padding:0 22px;background:var(--ink);color:var(--bg);border:none;border-radius:12px;font-size:15px;font-family:'DM Sans',sans-serif;font-weight:500;cursor:pointer;flex-shrink:0}
 .cs-btn:active{opacity:0.8}
-.cs-meta{font-size:11px;color:var(--ink3);margin-top:10px}
+.cs-meta{font-size:12px;color:var(--ink3);margin-top:10px}
 
+/* CALENDAR */
 .cal{padding:0 16px;margin-top:6px}
 .cgrid{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin-top:10px}
-.cd{aspect-ratio:1;border-radius:7px;background:var(--bg3)}
+.cd{aspect-ratio:1;border-radius:8px;background:var(--bg3)}
 .cd.win{background:var(--green)}
 .cd.cur{background:transparent;border:2px solid var(--green)}
 
-.logbtn{display:block;margin:18px 16px 0;width:calc(100% - 32px);padding:18px;background:var(--ink);color:var(--bg);border:none;border-radius:16px;font-size:17px;font-family:'Playfair Display',serif;font-weight:700;cursor:pointer;letter-spacing:0.01em;transition:background 0.2s,opacity 0.2s}
+/* LOG BTN */
+.logbtn{display:block;margin:20px 16px 0;width:calc(100% - 32px);padding:20px;background:var(--ink);color:var(--bg);border:none;border-radius:16px;font-size:18px;font-family:'Playfair Display',serif;font-weight:700;cursor:pointer;letter-spacing:0.01em;transition:background 0.2s,opacity 0.2s}
 .logbtn:active{opacity:0.85}
 .logbtn:disabled{opacity:0.28;cursor:not-allowed}
 .logbtn.won{background:var(--green);color:#fff}
 
-.foot{text-align:center;padding:20px 0 10px}
+.foot{text-align:center;padding:24px 0 10px}
 .foot button{font-size:12px;color:var(--ink3);background:none;border:none;cursor:pointer;font-family:'DM Sans',sans-serif}
 </style>
+</head>
+<body>
 
-<div class="page" id="page">
+<div class="page">
 
   <div class="topbar">
     <div>
@@ -105,13 +141,13 @@ background:var(--bg)
     <div class="t-right">
       <div class="spill" id="spill">0 day streak</div>
       <div class="theme-row">
-        <div class="tb" id="btn-light" onclick="setTheme('light')">
+        <div class="tb" id="btn-light" onclick="setTheme('light')" title="Light">
           <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><line x1="12" y1="2" x2="12" y2="5"/><line x1="12" y1="19" x2="12" y2="22"/><line x1="2" y1="12" x2="5" y2="12"/><line x1="19" y1="12" x2="22" y2="12"/><line x1="4.93" y1="4.93" x2="7.05" y2="7.05"/><line x1="16.95" y1="16.95" x2="19.07" y2="19.07"/><line x1="4.93" y1="19.07" x2="7.05" y2="16.95"/><line x1="16.95" y1="7.05" x2="19.07" y2="4.93"/></svg>
         </div>
-        <div class="tb" id="btn-dark" onclick="setTheme('dark')">
+        <div class="tb" id="btn-dark" onclick="setTheme('dark')" title="Dark">
           <svg viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
         </div>
-        <div class="tb" id="btn-system" onclick="setTheme('system')">
+        <div class="tb" id="btn-system" onclick="setTheme('system')" title="System">
           <svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
         </div>
       </div>
@@ -184,7 +220,7 @@ background:var(--bg)
   </div>
 
   <div class="cal">
-    <div class="sec" style="padding:0;margin:18px 0 10px">
+    <div class="sec" style="padding:0;margin:20px 0 10px">
       <div class="sec-l">LAST 28 DAYS</div>
       <div class="sec-r" id="winrate">0% win rate</div>
     </div>
@@ -193,11 +229,29 @@ background:var(--bg)
 
   <button class="logbtn" id="logbtn" onclick="logDay()">Mark today complete</button>
   <div class="foot"><button onclick="resetAll()">reset all data</button></div>
+
 </div>
 
 <script>
-const PROMPTS=["Nobody in church is watching you. They're fighting their own silent war. What would you do today if you truly believed that?","You said you're full of surprises. Name one thing you've been hiding from yourself that you're actually capable of.","What's one fear you've been calling 'being realistic'?","If the version of you from 6 months ahead came back, what's the first thing he'd tell you to stop doing?","You don't think about those people. Why do you assume they're thinking about you?","What does the man you want to become do at 2pm when he's bored and alone?","You've relapsed. You've restarted. What does that tell you about who you actually are?","Discipline isn't motivation. What's one thing you can do today that doesn't require feeling ready?","Name one habit you've been waiting to feel like doing. Do it today before you feel like it.","You believe you have full potential. What's the smallest proof of that you can show yourself today?","What are you escaping when you pick up your phone with no purpose?","Confidence isn't thinking highly of yourself — it's not needing others to. What's the difference for you?","What would you do differently today if no one would ever find out?","You've been consistent before. You proved it's possible. What's different about today?","Fear is just a feeling. What action have you been avoiding because of it?"];
-const K='dr_v5';
+const PROMPTS=[
+  "Nobody in church is watching you. They're fighting their own silent war. What would you do today if you truly believed that?",
+  "You said you're full of surprises. Name one thing you've been hiding from yourself that you're actually capable of.",
+  "What's one fear you've been calling 'being realistic'?",
+  "If the version of you from 6 months ahead came back, what's the first thing he'd tell you to stop doing?",
+  "You don't think about those people. Why do you assume they're thinking about you?",
+  "What does the man you want to become do at 2pm when he's bored and alone?",
+  "You've relapsed. You've restarted. What does that tell you about who you actually are?",
+  "Discipline isn't motivation. What's one thing you can do today that doesn't require feeling ready?",
+  "Name one habit you've been waiting to feel like doing. Do it today before you feel like it.",
+  "You believe you have full potential. What's the smallest proof of that you can show yourself today?",
+  "What are you escaping when you pick up your phone with no purpose?",
+  "Confidence isn't thinking highly of yourself — it's not needing others to. What's the difference for you?",
+  "What would you do differently today if no one would ever find out?",
+  "You've been consistent before. You proved it's possible. What's different about today?",
+  "Fear is just a feeling. What action have you been avoiding because of it?"
+];
+
+const K='dr_v6';
 function load(){try{return JSON.parse(localStorage.getItem(K))||{wins:[],streak:0,totalMins:0,checked:[],theme:'system'}}catch{return{wins:[],streak:0,totalMins:0,checked:[],theme:'system'}}}
 function save(){localStorage.setItem(K,JSON.stringify(S))}
 let S=load();
@@ -205,10 +259,9 @@ const today=new Date().toISOString().slice(0,10);
 const mq=window.matchMedia('(prefers-color-scheme: dark)');
 
 function applyTheme(t){
-  const pg=document.getElementById('page');
+  const b=document.body;
   const resolved=t==='system'?(mq.matches?'dark':'light'):t;
-  if(resolved==='dark'){pg.setAttribute('data-theme','dark');}
-  else{pg.removeAttribute('data-theme');}
+  b.classList.toggle('dark',resolved==='dark');
   ['light','dark','system'].forEach(x=>document.getElementById('btn-'+x).classList.toggle('on',x===t));
 }
 function setTheme(t){S.theme=t;save();applyTheme(t);}
@@ -238,7 +291,7 @@ function render(){
   renderCal();
   const won=S.wins.includes(today);
   const btn=document.getElementById('logbtn');
-  btn.textContent=won?'Today logged':'Mark today complete';
+  btn.textContent=won?'Today logged ✓':'Mark today complete';
   btn.disabled=won;
   won?btn.classList.add('won'):btn.classList.remove('won');
 }
@@ -287,6 +340,13 @@ function logDay(){
   save();render();
 }
 
-function resetAll(){if(confirm('Reset all progress?')){localStorage.removeItem(K);S=load();render();}}
+function resetAll(){
+  if(confirm('Reset all progress? This cannot be undone.')){
+    localStorage.removeItem(K);S=load();render();
+  }
+}
+
 render();
 </script>
+</body>
+</html>
