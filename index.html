@@ -288,6 +288,42 @@ body.dark{
 .sb-eye{font-size:9px;font-weight:500;letter-spacing:.12em;color:var(--g);margin-bottom:4px}
 .sb-text{font-size:14px;font-family:'Playfair Display',serif;color:var(--ink);line-height:1.5}
 
+/* MIND PAGE */
+.mind-hero{background:#111;border-radius:var(--r-xl);padding:22px 20px;position:relative;overflow:hidden}
+.mind-hero::before{content:'';position:absolute;top:-40px;right:-40px;width:120px;height:120px;border-radius:50%;background:rgba(29,158,117,0.12)}
+.mh-eye{font-size:9px;font-weight:500;letter-spacing:.14em;color:var(--g);margin-bottom:10px}
+.mh-day{font-size:10px;color:#444;letter-spacing:.08em;margin-bottom:6px}
+.mh-quote{font-family:'Playfair Display',serif;font-size:20px;color:#fff;line-height:1.4;margin-bottom:12px;font-weight:700}
+.mh-truth{font-size:13px;color:#888;line-height:1.65;margin-bottom:16px}
+.mh-action-box{background:rgba(29,158,117,0.12);border-left:3px solid var(--g);border-radius:0 var(--r-md) var(--r-md) 0;padding:10px 14px;margin-bottom:16px}
+.mha-label{font-size:9px;font-weight:500;letter-spacing:.12em;color:var(--g);margin-bottom:5px}
+.mha-q{font-size:13px;color:#ccc;line-height:1.6;font-style:italic}
+.mh-nav{display:flex;align-items:center;gap:10px;justify-content:center}
+.mh-arrow{background:rgba(255,255,255,0.08);border:none;color:#888;font-size:16px;width:32px;height:32px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s;font-family:'DM Sans',sans-serif}
+.mh-arrow:active{background:rgba(255,255,255,0.18)}
+.mh-dots{display:flex;gap:5px;align-items:center}
+.mh-dot{width:5px;height:5px;border-radius:50%;background:rgba(255,255,255,0.2);transition:all .2s;cursor:pointer}
+.mh-dot.on{background:var(--g);width:16px;border-radius:99px}
+.mind-filters{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
+.mf-chip{padding:6px 12px;border-radius:99px;border:1px solid var(--border);background:var(--card);font-size:11px;font-weight:500;color:var(--ink2);cursor:pointer;transition:all .15s;font-family:'DM Sans',sans-serif}
+.mf-chip.on{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.mind-card{background:var(--card);border:1px solid var(--border);border-radius:var(--r-lg);padding:16px;margin-bottom:8px;box-shadow:var(--shadow);cursor:pointer;transition:all .18s}
+.mind-card.expanded{border-color:var(--g28)}
+.mind-card:active{transform:scale(0.99)}
+.mc-top{display:flex;align-items:flex-start;gap:10px}
+.mc-cat-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;margin-top:5px}
+.mc-body{flex:1;min-width:0}
+.mc-tag{font-size:9px;font-weight:500;letter-spacing:.1em;margin-bottom:5px}
+.mc-title{font-size:15px;font-weight:500;color:var(--ink);line-height:1.4}
+.mc-read-btn{width:22px;height:22px;border-radius:50%;border:1.5px solid var(--border);background:var(--card);display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;transition:all .15s;cursor:pointer}
+.mc-read-btn.done{background:var(--g);border-color:var(--g)}
+.mc-expand{display:none;margin-top:12px;padding-top:12px;border-top:1px solid var(--border)}
+.mind-card.expanded .mc-expand{display:block}
+.mc-truth{font-size:13px;color:var(--ink2);line-height:1.7;margin-bottom:10px}
+.mc-reflect{background:var(--g10);border-left:3px solid var(--g);padding:10px 12px;border-radius:0 var(--r-md) var(--r-md) 0}
+.mc-reflect-label{font-size:9px;font-weight:500;letter-spacing:.1em;color:var(--g);margin-bottom:4px}
+.mc-reflect-q{font-size:12px;color:var(--ink);font-style:italic;line-height:1.6}
+
 /* PAST HABITS ENTRY */
 .past-day-entry{background:var(--card);border:1px solid var(--border);border-radius:var(--r-lg);padding:14px;margin-bottom:6px;box-shadow:var(--shadow)}
 .pde-head{display:flex;justify-content:space-between;align-items:center;cursor:pointer}
@@ -344,6 +380,7 @@ body.dark{
   <div class="tab on" onclick="nav('home',this)">Today</div>
   <div class="tab" onclick="nav('plan',this)">Plan</div>
   <div class="tab" onclick="nav('stats',this)">Stats</div>
+  <div class="tab" onclick="nav('mind',this)">Mind</div>
   <div class="tab" onclick="nav('triggers',this)">Triggers</div>
   <div class="tab" onclick="nav('review',this)" id="tab-review">Review</div>
 </div>
@@ -436,6 +473,33 @@ body.dark{
   <div id="past-days-list"></div>
 
   <div class="foot"><div id="stats-foot" style="font-size:11px;color:var(--ink3);padding:8px 0"></div></div>
+</div>
+</div>
+
+<!-- ====== MIND ====== -->
+<div class="page" id="pg-mind">
+<div class="wrap">
+  <div class="mind-hero" id="mind-hero" style="margin-top:16px">
+    <div class="mh-eye" id="mh-category"></div>
+    <div class="mh-day" id="mh-day-label"></div>
+    <div class="mh-quote" id="mh-quote"></div>
+    <div class="mh-truth" id="mh-truth"></div>
+    <div class="mh-action-box">
+      <div class="mha-label">SIT WITH THIS TODAY</div>
+      <div class="mha-q" id="mh-reflect-q"></div>
+    </div>
+    <div class="mh-nav">
+      <button class="mh-arrow" onclick="mindNav(-1)">←</button>
+      <div class="mh-dots" id="mh-dots"></div>
+      <button class="mh-arrow" onclick="mindNav(1)">→</button>
+    </div>
+  </div>
+  <div class="sec" style="margin-top:18px"><div class="sec-l">ALL THOUGHTS</div><div class="sec-r" id="mind-read-count"></div></div>
+  <div class="mind-filters" id="mind-filters"></div>
+  <div id="mind-cards"></div>
+  <div class="foot">
+    <div style="font-size:13px;color:var(--ink2);padding:8px 0;font-style:italic;font-family:'Playfair Display',serif">"The mind is the battlefield. Win there first."</div>
+  </div>
 </div>
 </div>
 
@@ -711,7 +775,7 @@ const BLOCKS=[
 ];
 
 const K='dr_v8';
-function def(){return{wins:[],missedDays:[],streak:0,totalMins:0,checked:[],todos:{morning:[],midday:[],evening:[],night:[]},habitMisses:{},habitDoneByDay:{},reviews:[],spRead:[],relapses:[],lastExport:null,theme:'system'}}
+function def(){return{wins:[],missedDays:[],streak:0,totalMins:0,checked:[],todos:{morning:[],midday:[],evening:[],night:[]},habitMisses:{},habitDoneByDay:{},reviews:[],spRead:[],relapses:[],mindRead:[],mindExpanded:[],lastExport:null,theme:'system'}}
 function load(){try{const d=JSON.parse(localStorage.getItem(K)||'{}');return Object.assign(def(),d);}catch{return def();}}
 function save(){localStorage.setItem(K,JSON.stringify(S))}
 let S=load();
@@ -755,6 +819,7 @@ function nav(id,tab){
   if(id==='stats')renderStats();
   if(id==='plan')renderPlan();
   if(id==='review')renderReview();
+  if(id==='mind')renderMind();
 }
 
 function render(){
@@ -1373,6 +1438,243 @@ function importData(e){
     }catch{alert('Could not read backup file. Make sure it\'s a valid export.');}
   };
   reader.readAsText(file);e.target.value='';
+}
+
+// ====== MIND PAGE ======
+const MIND_CATS={
+  fear:{label:'Fear & Anxiety',color:'#5B7FE8',dot:'#5B7FE8'},
+  identity:{label:'Identity',color:'#1D9E75',dot:'#1D9E75'},
+  rewire:{label:'Body & Brain',color:'#BA7517',dot:'#BA7517'},
+  bounce:{label:'Bounce Back',color:'#E24B4A',dot:'#E24B4A'},
+  consistency:{label:'Consistency',color:'#533AB7',dot:'#533AB7'}
+};
+
+const MIND_THOUGHTS=[
+  {
+    id:'m1',cat:'fear',
+    title:'Your fear is not a personality flaw.',
+    truth:'You didn\'t "become weak." Your nervous system was trained over years to associate being seen with danger. It learned: attention = threat, speaking = embarrassment. So it protects you by shutting you down. That shaking, that blank mind? Your system doing its job too well. It\'s not you failing. It\'s conditioning.',
+    reflect:'What\'s one specific moment from the past that taught your body that being seen is dangerous? Name it.'
+  },
+  {
+    id:'m2',cat:'fear',
+    title:'You can\'t think your way out of a feeling your body learned.',
+    truth:'The fear doesn\'t live in your logic. It lives in your nervous system. That\'s why "I know I\'m safe" doesn\'t stop the shaking. Your thinking brain can know you\'re fine. Your survival brain doesn\'t care — it fires before you can think. You don\'t fight it. You retrain it through repetition.',
+    reflect:'Next time fear hits, instead of arguing with it — what if you just said: "Yeah, I expected you." How does that change things?'
+  },
+  {
+    id:'m3',cat:'fear',
+    title:'Trying to turn fear off by force doesn\'t work.',
+    truth:'When you\'re alone and try to "feel afraid" nothing happens — because your survival system isn\'t triggered. But in front of people it fires automatically. You can\'t override automatic responses with willpower. You can only replace them with new evidence, repeated enough times that your brain updates its prediction.',
+    reflect:'Stop trying to be fearless. What would it look like to be brave AND shaking at the same time?'
+  },
+  {
+    id:'m4',cat:'rewire',
+    title:'Your brain has two systems. Only one listens to you.',
+    truth:'Thinking brain: logic, intention — "I\'m safe." Survival brain: automatic, faster than thought — reacts before you decide. When you\'re exposed, the survival system takes over. Heart races. Hands shake. Mind blanks. That system doesn\'t ask for permission. You don\'t beat it. You train it the same way it was trained against you — through repetition.',
+    reflect:'What\'s one small daily action that would start feeding the survival brain new evidence that you\'re safe?'
+  },
+  {
+    id:'m5',cat:'rewire',
+    title:'The wiring can be changed. Not by decision — by reps.',
+    truth:'Exposure isn\'t about not feeling fear. It\'s about staying in the discomfort long enough for your brain to update: "Nothing bad happened." At first: 100% fear. After reps: 70% → 40% → 10%. Eventually the trigger doesn\'t fire the same way. Not because you decided to be calm. Because your brain accumulated enough evidence.',
+    reflect:'Think about one thing you\'re already not afraid of that you once were. How did that shift happen?'
+  },
+  {
+    id:'m6',cat:'rewire',
+    title:'Porn doesn\'t just affect your urges. It rewires your baseline.',
+    truth:'Years of compulsive use trains the brain toward easy dopamine. Real-world effort becomes harder. Anxiety increases because the brain constantly expects a shortcut and doesn\'t find one. Confidence erodes not from laziness — but from a nervous system accustomed to reward without discomfort. You can\'t fix confidence while feeding that loop daily.',
+    reflect:'What\'s one thing in your real life that got harder to enjoy because the brain got used to something easier?'
+  },
+  {
+    id:'m7',cat:'identity',
+    title:'You are not the version of you that\'s been conditioned.',
+    truth:'The version of you that hides, shakes, and goes quiet — that\'s a trained response, not your identity. The fact that you speak well in private, think clearly, and want change proves the real version is already there. It\'s just buried under conditioning and habits. You are not broken. You are untrained.',
+    reflect:'Who were you before you learned to make yourself small? What do you remember about that version?'
+  },
+  {
+    id:'m8',cat:'identity',
+    title:'The real you already exists. Fear is just covering him.',
+    truth:'You said it yourself: you can speak in private. Think clearly alone. That means the capacity is there. The fear doesn\'t replace who you are — it mutes you temporarily. The work isn\'t to become someone new. It\'s to stop disappearing every time you\'re seen. That version is closer than you think.',
+    reflect:'If fear was gone tomorrow — not a little less, completely gone — what\'s the first thing you\'d do differently?'
+  },
+  {
+    id:'m9',cat:'identity',
+    title:'Being seen is not the same as being judged.',
+    truth:'Your brain learned to treat visibility as a threat. So now even neutral attention feels like surveillance. But most people are too caught up in their own inner noise to scrutinize you the way you fear. The judgment you\'re hiding from mostly exists inside you, not outside. The audience isn\'t as large or as harsh as your nervous system believes.',
+    reflect:'Think of the last time you judged someone harshly just for existing in a room. Did that actually happen?'
+  },
+  {
+    id:'m10',cat:'bounce',
+    title:'A slip is data, not a verdict.',
+    truth:'Every relapse, every missed day, every "I didn\'t do the rep" — it\'s not proof that you\'re weak. It\'s information. What was happening before it? What time of day? What emotion? What trigger? The person who logs it honestly and asks those questions is further along than the person who pretends it didn\'t happen.',
+    reflect:'What pattern do you notice about when you slip? Be specific — time, mood, what preceded it.'
+  },
+  {
+    id:'m11',cat:'bounce',
+    title:'Paul said: "I do what I don\'t want to do." He still wrote most of the New Testament.',
+    truth:'Romans 7 is Paul describing his own internal war — doing the thing he hates, not doing the thing he loves. He didn\'t resolve it through willpower. He resolved it through identity shift: "It is no longer I who do it, but sin living in me." He named it. He got back up. He didn\'t let the struggle define his output.',
+    reflect:'What would change if you stopped seeing your struggle as your identity and started seeing it as just the war — one you\'re still fighting?'
+  },
+  {
+    id:'m12',cat:'bounce',
+    title:'The man who falls and gets back up is stronger than the man who never fell.',
+    truth:'Every reset builds resilience if you use it right. The fall is not the end of the story — the return is. What makes a man is not whether he stayed clean for 6 months straight. It\'s whether, after the slip at 3am, he woke up the next morning and did the first habit anyway. That\'s character.',
+    reflect:'After your last slip, how fast did you get back up? What could you do to make that window shorter next time?'
+  },
+  {
+    id:'m13',cat:'consistency',
+    title:'Confidence comes after the reps. Not before.',
+    truth:'You\'re waiting to feel ready before you act. That\'s the trap. Confidence is the result of doing the thing you were afraid of, enough times, and surviving it. The feeling follows the action — never the other way. The man waiting to feel ready will wait forever. The man who acts uncomfortable is building the feeling with every rep.',
+    reflect:'Name one thing you\'ve been postponing until you "feel ready." What\'s the smallest possible version of that action you could do today?'
+  },
+  {
+    id:'m14',cat:'consistency',
+    title:'Motivation is a guest. Discipline is the house.',
+    truth:'You can\'t build anything on motivation because motivation leaves whenever it wants. It depends on mood, sleep, circumstances. Discipline is what runs the system when motivation is gone. And discipline isn\'t forced — it\'s built through small daily reps done before you feel like doing them. The days you don\'t feel it and show up anyway are the ones that build the most.',
+    reflect:'What\'s one habit you\'d do today even if you felt terrible? That\'s where your real foundation is.'
+  },
+  {
+    id:'m15',cat:'consistency',
+    title:'Small and daily beats big and occasional every time.',
+    truth:'Your brain changes through frequency, not intensity. One massive effort every two weeks builds less than one small rep every day. The body learns through repetition — not episodes. This is why the plan is about daily minimums: 1 social action, 1 physical movement, 1 habit reduced. These aren\'t goals. They\'re reps on a machine that rewires you.',
+    reflect:'What is one action so small that even on your worst day you could still do it? That\'s your non-negotiable.'
+  },
+  {
+    id:'m16',cat:'fear',
+    title:'Shame wants you to hide. Growth wants you to show up.',
+    truth:'After a slip, shame says: stay quiet, disappear, you don\'t deserve to be here. That voice is a liar. Shame keeps the loop running by isolating you. Growth says: log it, name it, show up the next morning, do the first habit anyway. The antidote to shame isn\'t perfection. It\'s accountability followed by action.',
+    reflect:'What does shame usually tell you to do after a hard day? What would accountability tell you to do instead?'
+  },
+  {
+    id:'m17',cat:'identity',
+    title:'You can\'t hate yourself into becoming someone better.',
+    truth:'Self-criticism feels productive because it\'s intense. But intensity is not the same as effectiveness. Studies show that self-compassion after failure leads to more effort and fewer future slips than self-punishment does. The internal voice that calls you weak is not your coach. It\'s the same system trying to keep you small.',
+    reflect:'What would you tell a close friend who was going through exactly what you\'re going through right now?'
+  },
+  {
+    id:'m18',cat:'rewire',
+    title:'Your brain is not fixed. It is always updating.',
+    truth:'Neuroplasticity means your brain literally reshapes itself based on what you repeatedly do. Every time you avoid, the avoidance pathway gets stronger. Every time you stay in the discomfort, the "nothing bad happened" pathway gets built. You are not locked into who you are today. You are building tomorrow\'s default responses right now.',
+    reflect:'What is one thing you\'ve already changed about yourself in the last few years — proof that your brain updates?'
+  },
+  {
+    id:'m19',cat:'bounce',
+    title:'You don\'t need a perfect past. You need the next right move.',
+    truth:'The idea that you have to "start clean" to matter is a trap. The slate doesn\'t need to be blank for today to count. You relapsed yesterday and did 5 habits today? That is the story of a man becoming. Progress is not a straight line. It\'s a direction. Stay pointed the right way.',
+    reflect:'If this week didn\'t count toward anything, what would you do differently? Now ask yourself why it actually does count.'
+  },
+  {
+    id:'m20',cat:'consistency',
+    title:'The reps you do when nobody is watching are the ones that change you.',
+    truth:'Nobody will see you pray at 6am. Nobody will see you put the phone down and pick up a book. Nobody will see you do the 50 push-ups when you\'re exhausted. But your nervous system sees every rep. Your brain records every time you chose the harder thing. Character is built in private. Reputation is just the shadow it eventually casts.',
+    reflect:'What\'s one thing you do consistently in private that the best version of you would do? Build on that.'
+  }
+];
+
+let mindFilter='all';
+let mindFeaturedIdx=0;
+
+function initMindFeatured(){
+  const now=new Date();
+  mindFeaturedIdx=(now.getDate()+now.getMonth()*7)%MIND_THOUGHTS.length;
+}
+
+function renderMind(){
+  initMindFeatured();
+  renderMindFeatured();
+  renderMindFilters();
+  renderMindCards();
+}
+
+function renderMindFeatured(){
+  const t=MIND_THOUGHTS[mindFeaturedIdx];
+  const cat=MIND_CATS[t.cat];
+  document.getElementById('mh-category').textContent=cat.label.toUpperCase()+' · DAY '+(mindFeaturedIdx+1)+' OF '+MIND_THOUGHTS.length;
+  document.getElementById('mh-day-label').textContent='TODAY\'S DEEP THOUGHT';
+  document.getElementById('mh-quote').textContent=t.title;
+  document.getElementById('mh-truth').textContent=t.truth;
+  document.getElementById('mh-reflect-q').textContent=t.reflect;
+  // dots
+  const dotsEl=document.getElementById('mh-dots');
+  const total=Math.min(MIND_THOUGHTS.length,20);
+  dotsEl.innerHTML='';
+  for(let i=0;i<MIND_THOUGHTS.length;i++){
+    const dot=document.createElement('div');
+    dot.className='mh-dot'+(i===mindFeaturedIdx?' on':'');
+    dot.onclick=(function(idx){return function(){mindFeaturedIdx=idx;renderMindFeatured();}})(i);
+    dotsEl.appendChild(dot);
+  }
+}
+
+function mindNav(dir){
+  mindFeaturedIdx=(mindFeaturedIdx+dir+MIND_THOUGHTS.length)%MIND_THOUGHTS.length;
+  renderMindFeatured();
+}
+
+function renderMindFilters(){
+  const wrap=document.getElementById('mind-filters');
+  wrap.innerHTML='';
+  const all=document.createElement('div');
+  all.className='mf-chip'+(mindFilter==='all'?' on':'');
+  all.textContent='All';
+  all.onclick=()=>{mindFilter='all';renderMindFilters();renderMindCards();};
+  wrap.appendChild(all);
+  Object.entries(MIND_CATS).forEach(([k,v])=>{
+    const chip=document.createElement('div');
+    chip.className='mf-chip'+(mindFilter===k?' on':'');
+    chip.textContent=v.label;
+    chip.onclick=()=>{mindFilter=k;renderMindFilters();renderMindCards();};
+    wrap.appendChild(chip);
+  });
+}
+
+function renderMindCards(){
+  if(!S.mindRead)S.mindRead=[];
+  const filtered=mindFilter==='all'?MIND_THOUGHTS:MIND_THOUGHTS.filter(t=>t.cat===mindFilter);
+  const readCount=MIND_THOUGHTS.filter(t=>S.mindRead.includes(t.id)).length;
+  document.getElementById('mind-read-count').textContent=readCount+'/'+MIND_THOUGHTS.length+' reflected';
+  const wrap=document.getElementById('mind-cards');
+  wrap.innerHTML='';
+  filtered.forEach(t=>{
+    const cat=MIND_CATS[t.cat];
+    const isRead=(S.mindRead||[]).includes(t.id);
+    const isExpanded=(S.mindExpanded||[]).includes(t.id);
+    const card=document.createElement('div');
+    card.className='mind-card'+(isExpanded?' expanded':'');
+    card.innerHTML=`<div class="mc-top" onclick="toggleMindCard('${t.id}')">
+      <div class="mc-cat-dot" style="background:${cat.dot}"></div>
+      <div class="mc-body">
+        <div class="mc-tag" style="color:${cat.color}">${cat.label.toUpperCase()}</div>
+        <div class="mc-title">${t.title}</div>
+      </div>
+      <div class="mc-read-btn${isRead?' done':''}" onclick="event.stopPropagation();toggleMindRead('${t.id}')" title="Mark reflected">
+        <svg viewBox="0 0 10 10" fill="none" stroke="${isRead?'#fff':'var(--ink3)'}" stroke-width="2.5" width="9" height="9"><polyline points="1.5,5 4,7.5 8.5,2.5"/></svg>
+      </div>
+    </div>
+    <div class="mc-expand">
+      <div class="mc-truth">${t.truth}</div>
+      <div class="mc-reflect">
+        <div class="mc-reflect-label">SIT WITH THIS</div>
+        <div class="mc-reflect-q">${t.reflect}</div>
+      </div>
+    </div>`;
+    wrap.appendChild(card);
+  });
+}
+
+function toggleMindCard(id){
+  if(!S.mindExpanded)S.mindExpanded=[];
+  const idx=S.mindExpanded.indexOf(id);
+  if(idx>-1)S.mindExpanded.splice(idx,1);else S.mindExpanded.push(id);
+  save();renderMindCards();
+}
+
+function toggleMindRead(id){
+  if(!S.mindRead)S.mindRead=[];
+  const idx=S.mindRead.indexOf(id);
+  if(idx>-1)S.mindRead.splice(idx,1);else S.mindRead.push(id);
+  save();renderMindCards();
 }
 
 render();
