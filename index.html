@@ -6,334 +6,670 @@
 <meta name="mobile-web-app-capable" content="yes"/>
 <meta name="apple-mobile-web-app-capable" content="yes"/>
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
-<meta name="theme-color" content="#0c0c0c"/>
+<meta name="theme-color" content="#0a0a0f"/>
 <title>Discipline Reset</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Syne:wght@400;500;600;700;800&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet"/>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;touch-action:manipulation}
-html,body{width:100%;min-height:100dvh;overflow-x:hidden;font-family:'DM Sans',sans-serif;-webkit-text-size-adjust:100%}
+html,body{width:100%;min-height:100dvh;overflow-x:hidden;font-family:'Syne',sans-serif;-webkit-text-size-adjust:100%}
 
-body{
-  --g:#1D9E75;--g10:rgba(29,158,117,0.1);--g28:rgba(29,158,117,0.28);
-  --bg:#f5f2ec;--card:#ffffff;--bg2:#ffffff;--bg3:#ece8e0;
-  --ink:#111111;--ink2:#555555;--ink3:#999999;
-  --border:rgba(0,0,0,0.08);--shadow:0 1px 4px rgba(0,0,0,0.06);
-  --danger:#E24B4A;--warn:#BA7517;
-  --r-md:8px;--r-lg:12px;--r-xl:16px;
+:root{
+  --g:#00C896;--g-dim:rgba(0,200,150,0.12);--g-mid:rgba(0,200,150,0.28);--g-glow:0 0 24px rgba(0,200,150,0.25);
+  --red:#FF4757;--red-dim:rgba(255,71,87,0.1);--amber:#FFB020;
+  --ink:#0a0a0f;--ink2:#3a3a4a;--ink3:#8888a0;
+  --bg:#f8f7f4;--card:#ffffff;--bg2:#f0ede8;--bg3:#e8e4dd;
+  --border:rgba(10,10,15,0.08);--border2:rgba(10,10,15,0.14);
+  --shadow:0 2px 12px rgba(10,10,15,0.07),0 1px 3px rgba(10,10,15,0.05);
+  --shadow-lg:0 8px 40px rgba(10,10,15,0.12),0 2px 8px rgba(10,10,15,0.06);
   background:var(--bg);color:var(--ink);
 }
 body.dark{
-  --bg:#0c0c0c;--card:#1a1a1a;--bg2:#1a1a1a;--bg3:#222222;
-  --ink:#f0ede7;--ink2:#aaaaaa;--ink3:#555555;
-  --border:rgba(255,255,255,0.07);--shadow:0 1px 6px rgba(0,0,0,0.5);
+  --ink:#f0ede7;--ink2:#a8a8c0;--ink3:#555570;
+  --bg:#0a0a0f;--card:#13131c;--bg2:#13131c;--bg3:#1e1e2a;
+  --border:rgba(240,237,231,0.07);--border2:rgba(240,237,231,0.12);
+  --shadow:0 2px 12px rgba(0,0,0,0.4),0 1px 3px rgba(0,0,0,0.3);
+  --shadow-lg:0 8px 40px rgba(0,0,0,0.6),0 2px 8px rgba(0,0,0,0.4);
 }
 
-.wrap{max-width:480px;margin:0 auto;padding:0 12px 80px}
+/* ===== TEXTURE OVERLAY ===== */
+body::before{
+  content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='1'/%3E%3C/svg%3E");
+  opacity:.025;
+}
 
-/* TOPBAR */
-.topbar{display:flex;justify-content:space-between;align-items:flex-start;padding:52px 16px 12px;max-width:480px;margin:0 auto}
-.t-day{font-size:11px;color:var(--ink3);letter-spacing:.04em}
-.t-date{font-family:'Playfair Display',serif;font-size:22px;font-weight:700;color:var(--ink);line-height:1.2;margin-top:2px}
-.t-right{display:flex;flex-direction:column;align-items:flex-end;gap:8px}
-.streak-pill{background:var(--ink);color:var(--bg);font-size:11px;font-weight:500;letter-spacing:.06em;padding:6px 14px;border-radius:99px}
+.wrap{max-width:480px;margin:0 auto;padding:0 14px 100px;position:relative;z-index:1}
+
+/* ===== TOPBAR ===== */
+.topbar{
+  display:flex;justify-content:space-between;align-items:flex-start;
+  padding:56px 16px 16px;max-width:480px;margin:0 auto;position:relative;z-index:1;
+}
+.t-day{font-family:'DM Mono',monospace;font-size:10px;color:var(--g);letter-spacing:.2em;text-transform:uppercase;margin-bottom:4px}
+.t-date{font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:600;color:#0a0a0f;line-height:1.1}
+.t-right{display:flex;flex-direction:column;align-items:flex-end;gap:10px}
+.streak-pill{
+  background:var(--ink);color:var(--bg);font-family:'DM Mono',monospace;
+  font-size:10px;letter-spacing:.12em;padding:7px 16px;border-radius:99px;
+  position:relative;overflow:hidden;
+}
+.streak-pill::before{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(90deg,transparent,rgba(0,200,150,0.2),transparent);
+  transform:translateX(-100%);animation:shimmer 3s infinite;
+}
+@keyframes shimmer{100%{transform:translateX(200%)}}
 .theme-row{display:flex;gap:5px}
-.tb{width:34px;height:34px;border-radius:9px;border:1px solid var(--border);background:var(--card);display:flex;align-items:center;justify-content:center;cursor:pointer}
-.tb.on{background:var(--g);border-color:var(--g)}
-.tb svg{width:15px;height:15px;stroke:var(--ink2);fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
-.tb.on svg{stroke:#fff}
+.tb{
+  width:32px;height:32px;border-radius:8px;border:1px solid var(--border2);
+  background:var(--card);display:flex;align-items:center;justify-content:center;cursor:pointer;
+  transition:all .2s;box-shadow:var(--shadow);
+}
+.tb:active{transform:scale(0.92)}
+.tb.on{background:var(--ink);border-color:var(--ink)}
+.tb svg{width:13px;height:13px;stroke:var(--ink3);fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.tb.on svg{stroke:var(--bg)}
 
-/* TABS */
-.tabs{display:flex;gap:4px;padding:4px 12px 0;max-width:480px;margin:0 auto}
-.tab{flex:1;padding:8px 2px;border:1px solid var(--border);border-radius:var(--r-md);background:var(--card);font-size:11px;font-weight:500;color:var(--ink2);cursor:pointer;text-align:center;transition:all .15s;font-family:'DM Sans',sans-serif}
+/* ===== TABS ===== */
+.tabs{
+  display:flex;gap:3px;padding:0 14px;max-width:480px;margin:0 auto 4px;
+  position:relative;z-index:1;overflow-x:auto;-webkit-overflow-scrolling:touch;
+  scrollbar-width:none;
+}
+.tabs::-webkit-scrollbar{display:none}
+.tab{
+  flex-shrink:0;padding:8px 14px;border:1px solid var(--border);border-radius:8px;
+  background:var(--card);font-size:10px;font-weight:600;color:var(--ink3);cursor:pointer;
+  text-align:center;transition:all .2s;font-family:'Syne',sans-serif;letter-spacing:.08em;
+  text-transform:uppercase;box-shadow:var(--shadow);
+}
+.tab:active{transform:scale(0.96)}
 .tab.on{background:var(--ink);color:var(--bg);border-color:var(--ink)}
 
-/* PAGES */
+/* ===== PAGES ===== */
 .page{display:none}.page.on{display:block}
 
-/* HERO */
-.hero{background:#111111;border-radius:var(--r-xl);padding:20px;margin:12px 0;position:relative;overflow:hidden}
-.h-ring{position:absolute;top:-44px;right:-44px;width:130px;height:130px;border-radius:50%;border:1px solid rgba(29,158,117,0.2)}
-.h-blob{position:absolute;top:-18px;right:-18px;width:72px;height:72px;border-radius:50%;background:rgba(29,158,117,0.14)}
-.h-blob2{position:absolute;bottom:-28px;left:-28px;width:84px;height:84px;border-radius:50%;background:rgba(29,158,117,0.06)}
-.h-eye{font-size:10px;letter-spacing:.1em;color:var(--g);margin-bottom:8px;font-weight:500}
-.h-title{font-family:'Playfair Display',serif;font-size:28px;color:#ffffff;line-height:1.15;margin-bottom:16px}
-.h-title b{color:var(--g);font-weight:900}
-.h-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:rgba(255,255,255,.08);border-radius:10px;overflow:hidden}
-.hcell{background:rgba(0,0,0,.3);padding:12px 6px;text-align:center}
-.hcell-n{font-family:'Playfair Display',serif;font-size:22px;font-weight:700;color:#fff}
-.hcell-l{font-size:9px;color:#666;letter-spacing:.08em;margin-top:2px}
+/* ===== HERO ===== */
+.hero{
+  background:var(--ink);border-radius:20px;padding:24px;margin:10px 0;
+  position:relative;overflow:hidden;box-shadow:var(--shadow-lg);
+}
+.hero::before{
+  content:'';position:absolute;top:-60px;right:-60px;width:200px;height:200px;
+  border-radius:50%;background:radial-gradient(circle,rgba(0,200,150,0.15) 0%,transparent 70%);
+}
+.hero::after{
+  content:'';position:absolute;bottom:-40px;left:-40px;width:140px;height:140px;
+  border-radius:50%;background:radial-gradient(circle,rgba(0,200,150,0.08) 0%,transparent 70%);
+}
+.h-eye{
+  font-family:'DM Mono',monospace;font-size:9px;color:var(--g);
+  letter-spacing:.2em;margin-bottom:12px;
+}
+.h-title{
+  font-family:'Cormorant Garamond',serif;font-size:36px;font-weight:600;
+  color:#fff;line-height:1.1;margin-bottom:20px;
+}
+.h-title em{color:var(--g);font-style:italic;font-weight:700}
+.h-stats{
+  display:grid;grid-template-columns:repeat(3,1fr);gap:1px;
+  background:rgba(255,255,255,0.06);border-radius:12px;overflow:hidden;
+}
+.hcell{background:rgba(0,0,0,0.25);padding:14px 8px;text-align:center;position:relative}
+.hcell-n{
+  font-family:'Cormorant Garamond',serif;font-size:30px;font-weight:700;color:#fff;
+  line-height:1;
+}
+.hcell-l{
+  font-family:'DM Mono',monospace;font-size:8px;color:#555;
+  letter-spacing:.14em;margin-top:4px;
+}
+.progress-arc{margin:0 auto 6px;display:block}
 
-/* PROMPT */
-.prompt-box{background:var(--g10);border-left:3px solid var(--g);border-radius:0 var(--r-md) var(--r-md) 0;padding:12px 14px;margin-bottom:12px}
-.p-eye{font-size:9px;font-weight:500;color:var(--g);letter-spacing:.12em;margin-bottom:5px}
-.p-q{font-family:'Playfair Display',serif;font-size:14px;color:var(--ink);line-height:1.6;font-style:italic}
+/* ===== PROMPT ===== */
+.prompt-box{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:16px;padding:16px 18px;margin-bottom:12px;
+  box-shadow:var(--shadow);position:relative;overflow:hidden;
+}
+.prompt-box::before{
+  content:'';position:absolute;left:0;top:0;bottom:0;width:3px;
+  background:linear-gradient(180deg,var(--g),transparent);
+}
+.p-eye{
+  font-family:'DM Mono',monospace;font-size:8px;font-weight:500;
+  color:var(--g);letter-spacing:.2em;margin-bottom:8px;
+}
+.p-q{
+  font-family:'Cormorant Garamond',serif;font-size:16px;color:var(--ink);
+  line-height:1.65;font-style:italic;
+}
 
-/* SECTION LABEL */
-.sec{display:flex;justify-content:space-between;align-items:center;margin:16px 0 8px}
-.sec-l{font-size:10px;font-weight:500;letter-spacing:.1em;color:var(--ink3)}
-.sec-r{font-size:12px;color:var(--g);font-weight:500}
+/* ===== SECTION LABEL ===== */
+.sec{display:flex;justify-content:space-between;align-items:center;margin:18px 0 10px}
+.sec-l{
+  font-family:'DM Mono',monospace;font-size:9px;font-weight:500;
+  letter-spacing:.18em;color:var(--ink3);text-transform:uppercase;
+}
+.sec-r{font-size:12px;color:var(--g);font-weight:600;font-family:'Syne',sans-serif}
 
-/* HABITS */
+/* ===== HABITS ===== */
 .hlist{display:flex;flex-direction:column;gap:6px}
-.habit{display:flex;align-items:center;gap:12px;background:var(--card);border:1px solid var(--border);border-radius:var(--r-lg);padding:14px;cursor:pointer;transition:all .18s;user-select:none;box-shadow:var(--shadow)}
+.habit{
+  display:flex;align-items:center;gap:12px;background:var(--card);
+  border:1px solid var(--border);border-radius:14px;padding:14px 16px;cursor:pointer;
+  transition:all .2s;user-select:none;box-shadow:var(--shadow);
+  position:relative;overflow:hidden;
+}
 .habit:active{transform:scale(0.985)}
-.habit.done{background:var(--g10);border-color:var(--g28)}
-.habit.missed{background:rgba(226,75,74,.05);border-color:rgba(226,75,74,.25);opacity:.75}
-.habit.auto-done{background:rgba(255,255,255,0.04);border-color:var(--border);opacity:.6}
-.hck{width:24px;height:24px;border-radius:50%;border:1.5px solid var(--ink3);flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all .18s}
-.habit.done .hck{background:var(--g);border-color:var(--g)}
-.habit.missed .hck{background:rgba(226,75,74,.15);border-color:var(--danger)}
-.habit.auto-done .hck{background:var(--ink3);border-color:var(--ink3)}
-.tick{width:10px;height:10px;opacity:0;transition:opacity .15s}
-.habit.done .tick,.habit.auto-done .tick{opacity:1}
-.miss-x{font-size:11px;color:var(--danger);opacity:0;font-weight:700}
+.habit.done{
+  background:linear-gradient(135deg,rgba(0,200,150,0.06),rgba(0,200,150,0.02));
+  border-color:var(--g-mid);
+}
+.habit.missed{
+  background:var(--red-dim);
+  border-color:rgba(255,71,87,0.2);opacity:.8;
+}
+.hck{
+  width:26px;height:26px;border-radius:50%;border:1.5px solid var(--border2);
+  flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all .2s;
+}
+.habit.done .hck{background:var(--g);border-color:var(--g);box-shadow:0 0 10px rgba(0,200,150,0.4)}
+.habit.missed .hck{background:var(--red-dim);border-color:var(--red)}
+.tick{width:11px;height:11px;opacity:0;transition:opacity .15s}
+.habit.done .tick{opacity:1}
+.miss-x{font-size:12px;color:var(--red);opacity:0;font-weight:700;font-family:'Syne',sans-serif}
 .habit.missed .miss-x{opacity:1}
 .hb{flex:1;min-width:0}
-.hn{font-size:15px;font-weight:500;color:var(--ink)}
+.hn{font-size:14px;font-weight:600;color:var(--ink);transition:color .2s;font-family:'Syne',sans-serif}
 .habit.done .hn{color:var(--g)}
-.habit.missed .hn{color:var(--danger);text-decoration:line-through}
-.habit.auto-done .hn{color:var(--ink3)}
-.hsub{font-size:11px;color:var(--ink3);margin-top:2px}
+.habit.missed .hn{color:var(--red);text-decoration:line-through;opacity:.7}
+.hsub{font-size:11px;color:var(--ink3);margin-top:2px;font-family:'Syne',sans-serif;font-weight:400}
+.habit-num{
+  font-family:'DM Mono',monospace;font-size:9px;color:var(--ink3);
+  flex-shrink:0;
+}
+.habit.done .habit-num{color:var(--g)}
 
-/* DAY SUMMARY BADGE */
-.day-summary{display:flex;align-items:center;gap:8px;padding:10px 14px;background:var(--card);border:1px solid var(--border);border-radius:var(--r-md);margin-bottom:6px;box-shadow:var(--shadow)}
-.ds-bar-bg{flex:1;height:6px;background:var(--bg3);border-radius:99px;overflow:hidden}
-.ds-bar-f{height:100%;border-radius:99px;transition:width .4s}
-.ds-pct{font-size:11px;font-weight:600;color:var(--ink2);white-space:nowrap;min-width:30px;text-align:right}
-.ds-label{font-size:11px;color:var(--ink3);white-space:nowrap}
+/* ===== DAY SUMMARY ===== */
+.day-summary{
+  display:flex;align-items:center;gap:10px;padding:12px 16px;
+  background:var(--card);border:1px solid var(--border);
+  border-radius:12px;margin-bottom:8px;box-shadow:var(--shadow);
+}
+.ds-bar-bg{flex:1;height:5px;background:var(--bg3);border-radius:99px;overflow:hidden}
+.ds-bar-f{height:100%;border-radius:99px;transition:width .5s cubic-bezier(.34,1.56,.64,1)}
+.ds-pct{font-family:'DM Mono',monospace;font-size:11px;font-weight:500;color:var(--ink2);white-space:nowrap;min-width:36px;text-align:right}
+.ds-label{font-size:11px;color:var(--ink3);white-space:nowrap;font-family:'Syne',sans-serif}
 
-/* RELAPSE BUTTON */
-.relapse-section{margin:16px 0 8px}
-.relapse-btn{display:block;width:100%;padding:14px;background:rgba(226,75,74,0.08);color:var(--danger);border:1.5px dashed rgba(226,75,74,0.4);border-radius:var(--r-lg);font-size:14px;font-family:'DM Sans',sans-serif;font-weight:500;cursor:pointer;transition:all .2s;text-align:center}
-.relapse-btn:active{background:rgba(226,75,74,0.15)}
-.relapse-logged{background:rgba(226,75,74,0.05);border:1px solid rgba(226,75,74,0.25);border-radius:var(--r-lg);padding:12px 14px;display:none}
-.relapse-logged.show{display:block}
-.rl-label{font-size:10px;font-weight:500;letter-spacing:.1em;color:var(--danger);margin-bottom:4px}
-.rl-text{font-size:13px;color:var(--ink2);line-height:1.5}
+/* ===== RELAPSE ===== */
+.relapse-section{margin:18px 0 8px}
+.relapse-btn{
+  display:block;width:100%;padding:14px 16px;
+  background:rgba(255,71,87,0.06);color:var(--red);
+  border:1.5px dashed rgba(255,71,87,0.35);
+  border-radius:14px;font-size:13px;font-family:'Syne',sans-serif;
+  font-weight:600;cursor:pointer;transition:all .2s;text-align:center;
+}
+.relapse-btn:active{background:rgba(255,71,87,0.12)}
+.relapse-logged{display:none}
+.relapse-logged.show{
+  display:block;background:rgba(255,71,87,0.04);
+  border:1px solid rgba(255,71,87,0.2);border-radius:14px;
+  padding:14px 16px;margin-bottom:8px;
+}
+.rl-label{
+  font-family:'DM Mono',monospace;font-size:8px;font-weight:500;
+  letter-spacing:.18em;color:var(--red);margin-bottom:6px;
+}
+.rl-text{font-size:13px;color:var(--ink2);line-height:1.55;font-family:'Syne',sans-serif}
 
-/* RELAPSE MODAL */
-.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:100;display:none;align-items:flex-end;justify-content:center}
+/* ===== MODAL ===== */
+.modal-overlay{
+  position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:100;
+  display:none;align-items:flex-end;justify-content:center;
+  backdrop-filter:blur(4px);
+}
 .modal-overlay.open{display:flex}
-.modal-box{background:var(--card);border-radius:var(--r-xl) var(--r-xl) 0 0;padding:24px 20px 40px;width:100%;max-width:480px;max-height:85dvh;overflow-y:auto}
-.modal-title{font-family:'Playfair Display',serif;font-size:20px;font-weight:700;color:var(--ink);margin-bottom:6px}
-.modal-sub{font-size:13px;color:var(--ink2);line-height:1.5;margin-bottom:18px}
-.modal-q{font-size:12px;font-weight:500;color:var(--ink2);margin:12px 0 5px;letter-spacing:.02em}
-.modal-ta{width:100%;min-height:68px;border:1px solid var(--border);border-radius:var(--r-md);padding:10px;font-size:13px;font-family:'DM Sans',sans-serif;background:var(--bg3);color:var(--ink);outline:none;resize:vertical;line-height:1.5}
-.modal-ta:focus{border-color:var(--danger)}
-.modal-row{display:flex;gap:8px;margin-top:16px}
-.modal-cancel{flex:1;padding:13px;background:var(--bg3);color:var(--ink2);border:none;border-radius:var(--r-md);font-size:14px;font-family:'DM Sans',sans-serif;font-weight:500;cursor:pointer}
-.modal-confirm{flex:2;padding:13px;background:var(--danger);color:#fff;border:none;border-radius:var(--r-md);font-size:14px;font-family:'DM Sans',sans-serif;font-weight:500;cursor:pointer}
-.modal-confirm:active{opacity:.85}
+.modal-box{
+  background:var(--card);border-radius:24px 24px 0 0;
+  padding:28px 22px 44px;width:100%;max-width:480px;
+  max-height:88dvh;overflow-y:auto;
+  box-shadow:0 -8px 60px rgba(0,0,0,0.3);
+}
+.modal-handle{width:36px;height:4px;background:var(--border2);border-radius:99px;margin:0 auto 20px}
+.modal-title{
+  font-family:'Cormorant Garamond',serif;font-size:24px;font-weight:600;
+  color:var(--ink);margin-bottom:6px;
+}
+.modal-sub{font-size:13px;color:var(--ink2);line-height:1.6;margin-bottom:20px;font-family:'Syne',sans-serif}
+.modal-q{
+  font-family:'DM Mono',monospace;font-size:9px;font-weight:500;
+  color:var(--ink3);margin:14px 0 6px;letter-spacing:.14em;text-transform:uppercase;
+}
+.modal-ta{
+  width:100%;min-height:72px;border:1px solid var(--border2);
+  border-radius:12px;padding:12px 14px;font-size:13px;
+  font-family:'Syne',sans-serif;background:var(--bg3);color:var(--ink);
+  outline:none;resize:vertical;line-height:1.6;transition:border-color .2s;
+}
+.modal-ta:focus{border-color:var(--red)}
+.modal-row{display:flex;gap:10px;margin-top:20px}
+.modal-cancel{
+  flex:1;padding:14px;background:var(--bg3);color:var(--ink2);
+  border:none;border-radius:12px;font-size:14px;font-family:'Syne',sans-serif;
+  font-weight:600;cursor:pointer;transition:opacity .2s;
+}
+.modal-cancel:active{opacity:.7}
+.modal-confirm{
+  flex:2;padding:14px;background:var(--red);color:#fff;
+  border:none;border-radius:12px;font-size:14px;font-family:'Syne',sans-serif;
+  font-weight:600;cursor:pointer;transition:opacity .2s;
+}
+.modal-confirm:active{opacity:.8}
 
-/* LOG BTN */
-.logbtn{display:block;width:100%;padding:18px;background:var(--ink);color:var(--bg);border:none;border-radius:var(--r-lg);font-size:17px;font-family:'Playfair Display',serif;font-weight:700;cursor:pointer;margin:16px 0 0;transition:all .2s;letter-spacing:.01em}
-.logbtn:active{opacity:.85}
-.logbtn.won{background:var(--g);color:#fff}
+/* ===== LOG BTN ===== */
+.logbtn{
+  display:block;width:100%;padding:18px;background:var(--ink);color:var(--bg);
+  border:none;border-radius:16px;font-size:16px;font-family:'Cormorant Garamond',serif;
+  font-weight:700;cursor:pointer;margin:18px 0 0;transition:all .25s;
+  letter-spacing:.04em;box-shadow:var(--shadow-lg);
+  position:relative;overflow:hidden;
+}
+.logbtn::before{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(135deg,transparent,rgba(255,255,255,0.05),transparent);
+  transform:translateX(-100%);transition:transform .4s;
+}
+.logbtn:hover::before{transform:translateX(100%)}
+.logbtn:active{transform:scale(0.98);opacity:.9}
+.logbtn.won{background:linear-gradient(135deg,#00C896,#00a878);color:#fff;box-shadow:0 4px 24px rgba(0,200,150,0.4)}
 .logbtn:disabled{opacity:.3;cursor:not-allowed}
 
-/* COURSE */
-.course-card{background:var(--card);border:1px solid var(--border);border-radius:var(--r-lg);padding:16px;margin-top:16px;box-shadow:var(--shadow)}
+/* ===== COURSE CARD ===== */
+.course-card{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:16px;padding:18px;margin-top:14px;box-shadow:var(--shadow);
+}
 .cc-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
-.cc-t{font-size:14px;font-weight:500;color:var(--ink)}
-.cc-pct{font-family:'Playfair Display',serif;font-size:22px;font-weight:700;color:var(--g)}
-.bar-bg{height:5px;background:var(--bg3);border-radius:99px;overflow:hidden;margin-bottom:12px}
-.bar-f{height:100%;background:var(--g);border-radius:99px;transition:width .5s}
+.cc-t{font-size:13px;font-weight:600;color:var(--ink);font-family:'Syne',sans-serif}
+.cc-pct{
+  font-family:'Cormorant Garamond',serif;font-size:26px;font-weight:700;color:var(--g);
+}
+.bar-bg{height:4px;background:var(--bg3);border-radius:99px;overflow:hidden;margin-bottom:14px}
+.bar-f{height:100%;background:linear-gradient(90deg,#00C896,#00dea8);border-radius:99px;transition:width .6s cubic-bezier(.34,1.56,.64,1)}
 .row{display:flex;gap:8px}
-.cc-inp{flex:1;min-width:0;height:42px;border:1px solid var(--border);border-radius:var(--r-md);padding:0 12px;font-size:14px;font-family:'DM Sans',sans-serif;background:var(--bg3);color:var(--ink);outline:none}
+.cc-inp{
+  flex:1;min-width:0;height:44px;border:1px solid var(--border2);
+  border-radius:12px;padding:0 14px;font-size:14px;font-family:'Syne',sans-serif;
+  background:var(--bg3);color:var(--ink);outline:none;transition:border-color .2s;
+}
 .cc-inp:focus{border-color:var(--g)}
-.cc-btn{height:42px;padding:0 18px;background:var(--ink);color:var(--bg);border:none;border-radius:var(--r-md);font-size:14px;font-family:'DM Sans',sans-serif;font-weight:500;cursor:pointer;flex-shrink:0}
-.cc-btn:active{opacity:.8}
-.cc-meta{font-size:11px;color:var(--ink3);margin-top:8px}
+.cc-btn{
+  height:44px;padding:0 20px;background:var(--ink);color:var(--bg);
+  border:none;border-radius:12px;font-size:13px;font-family:'Syne',sans-serif;
+  font-weight:700;cursor:pointer;transition:all .2s;letter-spacing:.04em;
+}
+.cc-btn:active{opacity:.8;transform:scale(0.97)}
+.cc-meta{
+  font-family:'DM Mono',monospace;font-size:10px;color:var(--ink3);margin-top:10px;
+  letter-spacing:.05em;
+}
 
-/* CALENDAR */
-.cgrid{display:grid;grid-template-columns:repeat(7,1fr);gap:5px;margin-top:8px}
-.cd{aspect-ratio:1;border-radius:6px;background:var(--bg3)}
-.cd.win{background:var(--g)}
-.cd.partial{background:rgba(29,158,117,0.35)}
-.cd.relapsed{background:rgba(226,75,74,0.5)}
-.cd.missed-day{background:rgba(226,75,74,0.2)}
-.cd.cur{background:transparent;border:1.5px solid var(--g)}
-
-/* GRAPH */
-.graph-wrap{background:var(--card);border:1px solid var(--border);border-radius:var(--r-lg);padding:16px;margin-bottom:12px;box-shadow:var(--shadow)}
-.graph-title{font-size:13px;font-weight:500;margin-bottom:12px;color:var(--ink2)}
-
-/* PLAN PAGE */
-.timeblock{background:var(--card);border:1px solid var(--border);border-radius:var(--r-lg);padding:14px;margin-bottom:8px;box-shadow:var(--shadow)}
-.tb-head{display:flex;align-items:center;gap:8px;margin-bottom:10px}
-.tb-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
-.tb-label{font-size:12px;font-weight:500;letter-spacing:.08em;color:var(--ink2)}
-.tb-count{font-size:11px;color:var(--ink3);margin-left:auto}
-.todos{display:flex;flex-direction:column;gap:5px}
-.todo-row{display:flex;align-items:center;gap:8px;padding:8px 10px;background:var(--bg3);border-radius:var(--r-md)}
-.todo-cb{width:16px;height:16px;border-radius:4px;border:1px solid var(--border);background:var(--card);flex-shrink:0;cursor:pointer;display:flex;align-items:center;justify-content:center}
-.todo-cb.chk{background:var(--g);border-color:var(--g)}
-.todo-txt{flex:1;font-size:13px;color:var(--ink)}
-.todo-del{font-size:13px;color:var(--ink3);cursor:pointer;padding:0 4px;background:none;border:none;font-family:'DM Sans',sans-serif}
-.add-row{display:flex;gap:6px;margin-top:8px}
-.add-inp{flex:1;height:36px;border:1px solid var(--border);border-radius:var(--r-md);padding:0 10px;font-size:13px;font-family:'DM Sans',sans-serif;background:var(--bg3);color:var(--ink);outline:none}
-.add-inp:focus{border-color:var(--g)}
-.add-btn{height:36px;padding:0 14px;background:var(--g);color:#fff;border:none;border-radius:var(--r-md);font-size:16px;font-family:'DM Sans',sans-serif;cursor:pointer}
-
-/* TRIGGERS PAGE */
-.trig-card{background:var(--card);border:1px solid var(--border);border-radius:var(--r-lg);padding:16px;margin-bottom:8px;box-shadow:var(--shadow)}
-.trig-head{display:flex;align-items:flex-start;gap:12px}
-.trig-icon{width:36px;height:36px;border-radius:var(--r-md);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:16px}
-.trig-body{flex:1;min-width:0}
-.trig-title{font-size:14px;font-weight:500;color:var(--ink)}
-.trig-sub{font-size:12px;color:var(--ink2);margin-top:3px;line-height:1.5}
-.trig-action{margin-top:10px;padding:10px;background:var(--g10);border-radius:var(--r-md);border-left:2px solid var(--g)}
-.trig-action-label{font-size:9px;font-weight:500;letter-spacing:.1em;color:var(--g);margin-bottom:4px}
-.trig-action-text{font-size:12px;color:var(--ink);line-height:1.5}
-
-/* URGE */
-.urge-btn{display:block;width:100%;padding:16px;background:var(--danger);color:#fff;border:none;border-radius:var(--r-lg);font-size:15px;font-family:'DM Sans',sans-serif;font-weight:500;cursor:pointer;margin-bottom:12px;transition:opacity .2s}
-.urge-btn:active{opacity:.85}
-.urge-steps{display:none;flex-direction:column;gap:6px;margin-bottom:14px}
-.urge-steps.open{display:flex}
-.ustep{display:flex;align-items:flex-start;gap:10px;background:var(--card);border:1px solid var(--border);border-radius:var(--r-md);padding:12px;box-shadow:var(--shadow)}
-.unum{width:22px;height:22px;border-radius:50%;background:var(--danger);color:#fff;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
-.ustep-t{font-size:13px;font-weight:500;color:var(--ink)}
-.ustep-s{font-size:11px;color:var(--ink2);margin-top:2px}
-.timer-btn{width:100%;padding:12px;background:var(--card);border:1px solid var(--g);border-radius:var(--r-md);color:var(--g);font-size:14px;font-family:'DM Sans',sans-serif;font-weight:500;cursor:pointer;transition:all .2s}
-.timer-btn.running{background:var(--g);color:#fff;border-color:var(--g)}
-
-/* FOOT */
-.foot{text-align:center;padding:20px 0 8px}
-.foot button{font-size:11px;color:var(--ink3);background:none;border:none;cursor:pointer;font-family:'DM Sans',sans-serif}
-
-/* WEEKLY REVIEW */
-.review-week{background:var(--card);border:1px solid var(--border);border-radius:var(--r-lg);padding:16px;margin-bottom:8px;box-shadow:var(--shadow)}
-.rw-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px}
-.rw-label{font-size:12px;font-weight:500;color:var(--ink);letter-spacing:.02em}
-.rw-date{font-size:11px;color:var(--ink3)}
-.rw-score{display:flex;gap:4px;margin:10px 0}
-.score-dot{width:28px;height:28px;border-radius:50%;border:1.5px solid var(--border);background:var(--bg3);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;color:var(--ink3);transition:all .15s;flex-shrink:0}
-.score-dot.sel{background:var(--g);border-color:var(--g);color:#fff}
-.rw-q{font-size:12px;font-weight:500;color:var(--ink2);margin:10px 0 5px}
-.rw-ta{width:100%;min-height:72px;border:1px solid var(--border);border-radius:var(--r-md);padding:10px;font-size:13px;font-family:'DM Sans',sans-serif;background:var(--bg3);color:var(--ink);outline:none;resize:vertical;line-height:1.5}
-.rw-ta:focus{border-color:var(--g)}
-.rw-save{width:100%;padding:12px;background:var(--g);color:#fff;border:none;border-radius:var(--r-md);font-size:14px;font-family:'DM Sans',sans-serif;font-weight:500;cursor:pointer;margin-top:10px;transition:opacity .2s}
-.rw-save:active{opacity:.85}
-.rw-saved{background:var(--g10);border-color:var(--g28)}
-.rw-saved-badge{font-size:10px;color:var(--g);font-weight:500;letter-spacing:.08em}
-.past-review{background:var(--card);border:1px solid var(--border);border-radius:var(--r-lg);padding:14px;margin-bottom:6px;box-shadow:var(--shadow)}
-.pr-head{display:flex;justify-content:space-between;align-items:center;cursor:pointer}
-.pr-week{font-size:13px;font-weight:500;color:var(--ink)}
-.pr-score{font-size:12px;color:var(--g);font-weight:500}
-.pr-body{margin-top:10px;display:none;border-top:1px solid var(--border);padding-top:10px}
-.pr-body.open{display:block}
-.pr-ans{margin-bottom:8px}
-.pr-ans-q{font-size:10px;font-weight:500;letter-spacing:.08em;color:var(--ink3);margin-bottom:3px}
-.pr-ans-a{font-size:13px;color:var(--ink2);line-height:1.5}
-
-/* RELAPSE TRACKER IN REVIEW */
-.relapse-tracker-section{background:var(--card);border:1px solid rgba(226,75,74,0.25);border-radius:var(--r-lg);padding:16px;margin-bottom:8px;box-shadow:var(--shadow)}
-.rt-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
-.rt-title{font-size:14px;font-weight:500;color:var(--ink)}
-.rt-count{font-size:12px;color:var(--danger);font-weight:500}
-.rt-empty{font-size:13px;color:var(--ink3);padding:8px 0;font-style:italic}
-.relapse-entry{border-left:3px solid rgba(226,75,74,0.5);padding:10px 12px;background:rgba(226,75,74,0.04);border-radius:0 var(--r-md) var(--r-md) 0;margin-bottom:8px}
-.re-date{font-size:10px;font-weight:500;letter-spacing:.1em;color:var(--danger);margin-bottom:4px}
-.re-note{font-size:12px;color:var(--ink2);line-height:1.5}
-.re-reflection{font-size:12px;color:var(--g);font-style:italic;margin-top:4px;line-height:1.4}
-.re-habits{font-size:11px;color:var(--ink3);margin-top:4px}
-
-/* HABIT SCORE in calendar legend */
-.legend-row{display:flex;gap:12px;margin-top:8px;flex-wrap:wrap}
-.legend-item{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--ink3)}
+/* ===== CALENDAR ===== */
+.cgrid{display:grid;grid-template-columns:repeat(7,1fr);gap:5px;margin-top:10px}
+.cd{
+  aspect-ratio:1;border-radius:8px;background:var(--bg3);
+  transition:all .2s;cursor:default;
+}
+.cd.win{background:var(--g);box-shadow:0 2px 8px rgba(0,200,150,0.3)}
+.cd.partial{background:rgba(0,200,150,0.3)}
+.cd.relapsed{background:var(--red);box-shadow:0 2px 8px rgba(255,71,87,0.3)}
+.cd.missed-day{background:rgba(255,71,87,0.2)}
+.cd.cur{background:transparent;border:2px solid var(--g)}
+.legend-row{display:flex;gap:14px;margin-top:10px;flex-wrap:wrap}
+.legend-item{display:flex;align-items:center;gap:6px;font-family:'DM Mono',monospace;font-size:9px;color:var(--ink3);letter-spacing:.08em}
 .legend-dot{width:10px;height:10px;border-radius:3px;flex-shrink:0}
 
-/* SPIRITUAL GROWTH */
-.sp-intro{font-size:12px;color:var(--ink2);line-height:1.6;padding:10px 14px;background:var(--g10);border-radius:var(--r-md);margin-bottom:10px;border-left:3px solid var(--g)}
-.sp-phase{background:var(--card);border:1px solid var(--border);border-radius:var(--r-lg);margin-bottom:8px;box-shadow:var(--shadow);overflow:hidden}
-.sp-phase-head{display:flex;align-items:center;gap:10px;padding:14px;cursor:pointer}
-.sp-phase-icon{font-size:18px;flex-shrink:0}
-.sp-phase-info{flex:1;min-width:0}
-.sp-phase-title{font-size:14px;font-weight:500;color:var(--ink)}
-.sp-phase-sub{font-size:11px;color:var(--ink3);margin-top:2px}
-.sp-phase-pct{font-size:12px;color:var(--g);font-weight:500;white-space:nowrap}
-.sp-chevron{font-size:12px;color:var(--ink3);transition:transform .2s;flex-shrink:0}
-.sp-phase.open .sp-chevron{transform:rotate(180deg)}
-.sp-phase-body{display:none;padding:0 14px 14px}
-.sp-phase.open .sp-phase-body{display:block}
-.sp-fix{font-size:12px;color:var(--ink2);font-style:italic;line-height:1.5;margin-bottom:10px;padding:8px 10px;background:var(--bg3);border-radius:var(--r-md)}
-.sp-passages{display:flex;flex-direction:column;gap:6px}
-.sp-pass{display:flex;align-items:flex-start;gap:10px;padding:10px 12px;background:var(--bg3);border-radius:var(--r-md);cursor:pointer;transition:all .15s}
-.sp-pass.read{background:var(--g10);border:1px solid var(--g28)}
-.sp-cb{width:18px;height:18px;border-radius:4px;border:1.5px solid var(--ink3);flex-shrink:0;display:flex;align-items:center;justify-content:center;margin-top:1px;transition:all .15s}
-.sp-pass.read .sp-cb{background:var(--g);border-color:var(--g)}
-.sp-pass-ref{font-size:13px;font-weight:500;color:var(--ink);line-height:1.3}
-.sp-pass.read .sp-pass-ref{color:var(--g)}
-.sp-pass-note{font-size:11px;color:var(--ink3);margin-top:2px;line-height:1.4}
-.sp-how{background:var(--card);border:1px solid var(--border);border-radius:var(--r-lg);padding:14px;margin-top:8px;margin-bottom:8px;box-shadow:var(--shadow)}
-.sp-how-title{font-size:12px;font-weight:500;letter-spacing:.08em;color:var(--ink3);margin-bottom:10px}
-.sp-how-row{display:flex;align-items:flex-start;gap:10px;margin-bottom:8px;font-size:13px;color:var(--ink2);line-height:1.5}
-.sp-how-n{width:20px;height:20px;border-radius:50%;background:var(--ink);color:var(--bg);font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
+/* ===== GRAPH ===== */
+.graph-wrap{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:16px;padding:18px;margin-bottom:12px;box-shadow:var(--shadow);
+}
+.graph-title{
+  font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.14em;
+  color:var(--ink3);margin-bottom:14px;text-transform:uppercase;
+}
 
-/* BACKUP */
-.backup-card{background:var(--card);border:1px solid var(--border);border-radius:var(--r-lg);padding:16px;margin-bottom:8px;box-shadow:var(--shadow)}
-.bk-title{font-size:14px;font-weight:500;color:var(--ink);margin-bottom:4px}
-.bk-sub{font-size:12px;color:var(--ink2);line-height:1.5;margin-bottom:12px}
+/* ===== PLAN PAGE ===== */
+.timeblock{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:16px;padding:16px;margin-bottom:8px;box-shadow:var(--shadow);
+}
+.tb-head{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.tb-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.tb-label{
+  font-family:'DM Mono',monospace;font-size:9px;font-weight:500;
+  letter-spacing:.18em;color:var(--ink2);text-transform:uppercase;
+}
+.tb-count{font-family:'DM Mono',monospace;font-size:9px;color:var(--ink3);margin-left:auto}
+.todos{display:flex;flex-direction:column;gap:5px}
+.todo-row{
+  display:flex;align-items:center;gap:10px;padding:9px 12px;
+  background:var(--bg3);border-radius:10px;
+}
+.todo-cb{
+  width:18px;height:18px;border-radius:5px;border:1.5px solid var(--border2);
+  background:var(--card);flex-shrink:0;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;transition:all .15s;
+}
+.todo-cb.chk{background:var(--g);border-color:var(--g)}
+.todo-txt{flex:1;font-size:12px;color:var(--ink);font-family:'Syne',sans-serif;font-weight:500}
+.todo-del{
+  font-size:11px;color:var(--ink3);cursor:pointer;padding:0 4px;
+  background:none;border:none;font-family:'Syne',sans-serif;transition:color .2s;
+}
+.todo-del:hover{color:var(--red)}
+.add-row{display:flex;gap:6px;margin-top:10px}
+.add-inp{
+  flex:1;height:38px;border:1px solid var(--border2);border-radius:10px;
+  padding:0 12px;font-size:12px;font-family:'Syne',sans-serif;
+  background:var(--bg3);color:var(--ink);outline:none;transition:border-color .2s;
+}
+.add-inp:focus{border-color:var(--g)}
+.add-btn{
+  height:38px;width:38px;background:var(--g);color:#fff;
+  border:none;border-radius:10px;font-size:18px;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  transition:all .2s;font-family:'Syne',sans-serif;
+}
+.add-btn:active{opacity:.8;transform:scale(0.92)}
+
+/* ===== TRIGGERS ===== */
+.trig-card{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:16px;padding:18px;margin-bottom:8px;box-shadow:var(--shadow);
+}
+.trig-head{display:flex;align-items:flex-start;gap:14px}
+.trig-icon{
+  width:40px;height:40px;border-radius:12px;
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:18px;
+}
+.trig-body{flex:1;min-width:0}
+.trig-title{font-size:14px;font-weight:700;color:var(--ink);margin-bottom:4px;font-family:'Syne',sans-serif}
+.trig-sub{font-size:12px;color:var(--ink2);line-height:1.6;font-family:'Syne',sans-serif}
+.trig-action{
+  margin-top:12px;padding:12px 14px;background:var(--g-dim);
+  border-radius:10px;border-left:2.5px solid var(--g);
+}
+.trig-action-label{
+  font-family:'DM Mono',monospace;font-size:8px;font-weight:500;
+  letter-spacing:.16em;color:var(--g);margin-bottom:5px;
+}
+.trig-action-text{font-size:12px;color:var(--ink);line-height:1.55;font-family:'Syne',sans-serif}
+
+/* ===== URGE ===== */
+.urge-btn{
+  display:block;width:100%;padding:18px;background:var(--red);
+  color:#fff;border:none;border-radius:16px;font-size:14px;
+  font-family:'Syne',sans-serif;font-weight:700;cursor:pointer;
+  margin-bottom:12px;transition:all .2s;box-shadow:0 4px 20px rgba(255,71,87,0.3);
+  letter-spacing:.04em;
+}
+.urge-btn:active{opacity:.85;transform:scale(0.98)}
+.urge-steps{display:none;flex-direction:column;gap:6px;margin-bottom:14px}
+.urge-steps.open{display:flex}
+.ustep{
+  display:flex;align-items:flex-start;gap:12px;background:var(--card);
+  border:1px solid var(--border);border-radius:14px;padding:14px;box-shadow:var(--shadow);
+}
+.unum{
+  width:24px;height:24px;border-radius:50%;background:var(--red);
+  color:#fff;font-family:'DM Mono',monospace;font-size:11px;font-weight:700;
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;
+}
+.ustep-t{font-size:13px;font-weight:700;color:var(--ink);font-family:'Syne',sans-serif}
+.ustep-s{font-size:11px;color:var(--ink3);margin-top:2px;font-family:'Syne',sans-serif}
+.timer-btn{
+  width:100%;padding:14px;background:var(--card);border:1.5px solid var(--g);
+  border-radius:12px;color:var(--g);font-size:13px;font-family:'Syne',sans-serif;
+  font-weight:700;cursor:pointer;transition:all .2s;letter-spacing:.04em;
+}
+.timer-btn.running{background:var(--g);color:#fff;border-color:var(--g)}
+
+/* ===== FOOTER ===== */
+.foot{text-align:center;padding:24px 0 8px}
+.foot button{
+  font-family:'DM Mono',monospace;font-size:9px;color:var(--ink3);
+  background:none;border:none;cursor:pointer;letter-spacing:.12em;
+  text-transform:uppercase;transition:color .2s;
+}
+.foot button:hover{color:var(--red)}
+
+/* ===== WEEKLY REVIEW ===== */
+.review-week{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:16px;padding:18px;margin-bottom:8px;box-shadow:var(--shadow);
+}
+.rw-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px}
+.rw-label{font-size:13px;font-weight:700;color:var(--ink);font-family:'Syne',sans-serif}
+.rw-date{font-family:'DM Mono',monospace;font-size:9px;color:var(--ink3)}
+.rw-score{display:flex;gap:5px;margin:12px 0}
+.score-dot{
+  width:32px;height:32px;border-radius:50%;border:1.5px solid var(--border2);
+  background:var(--bg3);cursor:pointer;display:flex;align-items:center;justify-content:center;
+  font-family:'DM Mono',monospace;font-size:11px;font-weight:600;color:var(--ink3);
+  transition:all .18s;flex-shrink:0;
+}
+.score-dot:active{transform:scale(0.88)}
+.score-dot.sel{background:var(--g);border-color:var(--g);color:#fff;box-shadow:0 0 10px rgba(0,200,150,0.4)}
+.rw-q{font-family:'DM Mono',monospace;font-size:9px;font-weight:500;color:var(--ink3);margin:12px 0 6px;letter-spacing:.12em;text-transform:uppercase}
+.rw-ta{
+  width:100%;min-height:76px;border:1px solid var(--border2);border-radius:12px;
+  padding:12px 14px;font-size:13px;font-family:'Syne',sans-serif;
+  background:var(--bg3);color:var(--ink);outline:none;resize:vertical;line-height:1.6;
+  transition:border-color .2s;
+}
+.rw-ta:focus{border-color:var(--g)}
+.rw-save{
+  width:100%;padding:13px;background:var(--g);color:#fff;
+  border:none;border-radius:12px;font-size:13px;font-family:'Syne',sans-serif;
+  font-weight:700;cursor:pointer;margin-top:12px;transition:all .2s;
+  letter-spacing:.06em;
+}
+.rw-save:active{opacity:.85}
+
+/* ===== RELAPSE TRACKER ===== */
+.relapse-tracker-section{
+  background:var(--card);border:1px solid rgba(255,71,87,0.2);
+  border-radius:16px;padding:18px;margin-bottom:8px;box-shadow:var(--shadow);
+}
+.rt-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
+.rt-title{font-size:13px;font-weight:700;color:var(--ink);font-family:'Syne',sans-serif}
+.rt-count{font-family:'DM Mono',monospace;font-size:10px;color:var(--red);font-weight:500;letter-spacing:.08em}
+.rt-empty{font-size:13px;color:var(--ink3);padding:6px 0;font-style:italic;font-family:'Cormorant Garamond',serif;font-size:15px}
+.relapse-entry{
+  border-left:2.5px solid rgba(255,71,87,0.5);padding:10px 14px;
+  background:rgba(255,71,87,0.04);border-radius:0 12px 12px 0;margin-bottom:8px;
+}
+.re-date{font-family:'DM Mono',monospace;font-size:8px;font-weight:500;letter-spacing:.18em;color:var(--red);margin-bottom:5px}
+.re-note{font-size:12px;color:var(--ink2);line-height:1.55;font-family:'Syne',sans-serif}
+.re-reflection{font-size:12px;color:var(--g);font-style:italic;margin-top:5px;line-height:1.4;font-family:'Cormorant Garamond',serif;font-size:14px}
+.re-habits{font-family:'DM Mono',monospace;font-size:9px;color:var(--ink3);margin-top:5px;letter-spacing:.06em}
+
+/* ===== PAST REVIEW ===== */
+.past-review{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:16px;padding:16px;margin-bottom:6px;box-shadow:var(--shadow);
+}
+.pr-head{display:flex;justify-content:space-between;align-items:center;cursor:pointer}
+.pr-week{font-size:13px;font-weight:600;color:var(--ink);font-family:'Syne',sans-serif}
+.pr-score{font-family:'DM Mono',monospace;font-size:11px;color:var(--g);font-weight:500}
+.pr-body{margin-top:12px;display:none;border-top:1px solid var(--border);padding-top:12px}
+.pr-body.open{display:block}
+.pr-ans{margin-bottom:10px}
+.pr-ans-q{font-family:'DM Mono',monospace;font-size:8px;font-weight:500;letter-spacing:.16em;color:var(--ink3);margin-bottom:4px;text-transform:uppercase}
+.pr-ans-a{font-size:13px;color:var(--ink2);line-height:1.6;font-family:'Syne',sans-serif}
+
+/* ===== SUNDAY BANNER ===== */
+.sunday-banner{
+  background:linear-gradient(135deg,rgba(0,200,150,0.12),rgba(0,200,150,0.04));
+  border:1px solid var(--g-mid);border-radius:16px;
+  padding:16px 18px;margin-bottom:14px;display:none;
+}
+.sunday-banner.show{display:block}
+.sb-eye{font-family:'DM Mono',monospace;font-size:8px;font-weight:500;letter-spacing:.2em;color:var(--g);margin-bottom:5px;text-transform:uppercase}
+.sb-text{font-family:'Cormorant Garamond',serif;font-size:16px;color:var(--ink);line-height:1.6;font-style:italic}
+
+/* ===== SPIRITUAL ===== */
+.sp-intro{
+  font-size:13px;color:var(--ink2);line-height:1.7;padding:14px 16px;
+  background:var(--g-dim);border-radius:14px;margin-bottom:12px;
+  border-left:3px solid var(--g);font-family:'Syne',sans-serif;
+}
+.sp-phase{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:16px;margin-bottom:8px;box-shadow:var(--shadow);overflow:hidden;
+}
+.sp-phase-head{display:flex;align-items:center;gap:12px;padding:16px;cursor:pointer}
+.sp-phase-icon{font-size:20px;flex-shrink:0}
+.sp-phase-info{flex:1;min-width:0}
+.sp-phase-title{font-size:14px;font-weight:700;color:var(--ink);font-family:'Syne',sans-serif}
+.sp-phase-sub{font-size:11px;color:var(--ink3);margin-top:2px;font-family:'Syne',sans-serif}
+.sp-phase-pct{font-family:'DM Mono',monospace;font-size:10px;color:var(--g);font-weight:500;white-space:nowrap}
+.sp-chevron{font-size:11px;color:var(--ink3);transition:transform .2s;flex-shrink:0}
+.sp-phase.open .sp-chevron{transform:rotate(180deg)}
+.sp-phase-body{display:none;padding:0 16px 16px}
+.sp-phase.open .sp-phase-body{display:block}
+.sp-fix{
+  font-size:12px;color:var(--ink2);font-style:italic;line-height:1.6;
+  margin-bottom:12px;padding:10px 12px;background:var(--bg3);border-radius:10px;
+  font-family:'Cormorant Garamond',serif;font-size:14px;
+}
+.sp-passages{display:flex;flex-direction:column;gap:6px}
+.sp-pass{
+  display:flex;align-items:flex-start;gap:12px;padding:12px 14px;
+  background:var(--bg3);border-radius:12px;cursor:pointer;transition:all .18s;
+}
+.sp-pass.read{background:var(--g-dim);border:1px solid var(--g-mid)}
+.sp-pass:active{transform:scale(0.98)}
+.sp-cb{
+  width:20px;height:20px;border-radius:5px;border:1.5px solid var(--border2);
+  flex-shrink:0;display:flex;align-items:center;justify-content:center;margin-top:1px;
+  transition:all .18s;
+}
+.sp-pass.read .sp-cb{background:var(--g);border-color:var(--g)}
+.sp-pass-ref{font-size:13px;font-weight:700;color:var(--ink);line-height:1.3;font-family:'Syne',sans-serif}
+.sp-pass.read .sp-pass-ref{color:var(--g)}
+.sp-pass-note{font-size:11px;color:var(--ink3);margin-top:3px;line-height:1.4;font-family:'Syne',sans-serif}
+.sp-how{
+  background:var(--card);border:1px solid var(--border);border-radius:16px;
+  padding:16px;margin-top:10px;margin-bottom:8px;box-shadow:var(--shadow);
+}
+.sp-how-title{font-family:'DM Mono',monospace;font-size:9px;font-weight:500;letter-spacing:.16em;color:var(--ink3);margin-bottom:12px;text-transform:uppercase}
+.sp-how-row{display:flex;align-items:flex-start;gap:12px;margin-bottom:10px;font-size:13px;color:var(--ink2);line-height:1.6;font-family:'Syne',sans-serif}
+.sp-how-n{
+  width:22px;height:22px;border-radius:50%;background:var(--ink);
+  color:var(--bg);font-family:'DM Mono',monospace;font-size:10px;font-weight:700;
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;
+}
+
+/* ===== BACKUP ===== */
+.backup-card{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:16px;padding:18px;margin-bottom:8px;box-shadow:var(--shadow);
+}
+.bk-title{font-size:14px;font-weight:700;color:var(--ink);margin-bottom:5px;font-family:'Syne',sans-serif}
+.bk-sub{font-size:12px;color:var(--ink2);line-height:1.6;margin-bottom:14px;font-family:'Syne',sans-serif}
 .bk-row{display:flex;gap:8px}
-.bk-btn{flex:1;padding:11px;border:1px solid var(--border);border-radius:var(--r-md);font-size:13px;font-family:'DM Sans',sans-serif;font-weight:500;cursor:pointer;transition:all .15s;text-align:center}
+.bk-btn{
+  flex:1;padding:12px;border:1px solid var(--border);border-radius:12px;
+  font-size:12px;font-family:'Syne',sans-serif;font-weight:700;
+  cursor:pointer;transition:all .18s;text-align:center;letter-spacing:.04em;
+}
 .bk-btn.export{background:var(--ink);color:var(--bg);border-color:var(--ink)}
 .bk-btn.import{background:var(--card);color:var(--ink)}
-.bk-btn:active{opacity:.8}
-.bk-note{font-size:11px;color:var(--ink3);margin-top:8px;line-height:1.5}
-.sunday-banner{background:linear-gradient(135deg,rgba(29,158,117,0.15),rgba(29,158,117,0.05));border:1px solid var(--g28);border-radius:var(--r-lg);padding:14px 16px;margin-bottom:12px;display:none}
-.sunday-banner.show{display:block}
-.sb-eye{font-size:9px;font-weight:500;letter-spacing:.12em;color:var(--g);margin-bottom:4px}
-.sb-text{font-size:14px;font-family:'Playfair Display',serif;color:var(--ink);line-height:1.5}
+.bk-btn:active{opacity:.8;transform:scale(0.97)}
+.bk-note{font-family:'DM Mono',monospace;font-size:9px;color:var(--ink3);margin-top:10px;line-height:1.7;letter-spacing:.04em}
 
-/* MIND PAGE */
-.mind-hero{background:#111;border-radius:var(--r-xl);padding:22px 20px;position:relative;overflow:hidden}
-.mind-hero::before{content:'';position:absolute;top:-40px;right:-40px;width:120px;height:120px;border-radius:50%;background:rgba(29,158,117,0.12)}
-.mh-eye{font-size:9px;font-weight:500;letter-spacing:.14em;color:var(--g);margin-bottom:10px}
-.mh-day{font-size:10px;color:#444;letter-spacing:.08em;margin-bottom:6px}
-.mh-quote{font-family:'Playfair Display',serif;font-size:20px;color:#fff;line-height:1.4;margin-bottom:12px;font-weight:700}
-.mh-truth{font-size:13px;color:#888;line-height:1.65;margin-bottom:16px}
-.mh-action-box{background:rgba(29,158,117,0.12);border-left:3px solid var(--g);border-radius:0 var(--r-md) var(--r-md) 0;padding:10px 14px;margin-bottom:16px}
-.mha-label{font-size:9px;font-weight:500;letter-spacing:.12em;color:var(--g);margin-bottom:5px}
-.mha-q{font-size:13px;color:#ccc;line-height:1.6;font-style:italic}
-.mh-nav{display:flex;align-items:center;gap:10px;justify-content:center}
-.mh-arrow{background:rgba(255,255,255,0.08);border:none;color:#888;font-size:16px;width:32px;height:32px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s;font-family:'DM Sans',sans-serif}
-.mh-arrow:active{background:rgba(255,255,255,0.18)}
-.mh-dots{display:flex;gap:5px;align-items:center}
-.mh-dot{width:5px;height:5px;border-radius:50%;background:rgba(255,255,255,0.2);transition:all .2s;cursor:pointer}
-.mh-dot.on{background:var(--g);width:16px;border-radius:99px}
+/* ===== MIND PAGE ===== */
+.mind-hero{
+  background:var(--ink);border-radius:20px;padding:24px 22px;
+  position:relative;overflow:hidden;margin-top:14px;box-shadow:var(--shadow-lg);
+}
+.mind-hero::before{
+  content:'';position:absolute;top:-50px;right:-50px;width:180px;height:180px;
+  border-radius:50%;background:radial-gradient(circle,rgba(0,200,150,0.14) 0%,transparent 70%);
+}
+.mh-eye{font-family:'DM Mono',monospace;font-size:8px;font-weight:500;letter-spacing:.2em;color:var(--g);margin-bottom:10px;text-transform:uppercase}
+.mh-day{font-family:'DM Mono',monospace;font-size:9px;color:#444;letter-spacing:.12em;margin-bottom:6px}
+.mh-quote{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:700;color:#fff;line-height:1.4;margin-bottom:14px}
+.mh-truth{font-size:12px;color:#888;line-height:1.75;margin-bottom:18px;font-family:'Syne',sans-serif}
+.mh-action-box{
+  background:rgba(0,200,150,0.1);border-left:2.5px solid var(--g);
+  border-radius:0 12px 12px 0;padding:12px 16px;margin-bottom:18px;
+}
+.mha-label{font-family:'DM Mono',monospace;font-size:8px;font-weight:500;letter-spacing:.18em;color:var(--g);margin-bottom:6px}
+.mha-q{font-size:13px;color:#bbb;line-height:1.65;font-style:italic;font-family:'Cormorant Garamond',serif;font-size:15px}
+.mh-nav{display:flex;align-items:center;gap:12px;justify-content:center}
+.mh-arrow{
+  background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.1);
+  color:#777;font-size:14px;width:36px;height:36px;border-radius:50%;
+  cursor:pointer;display:flex;align-items:center;justify-content:center;
+  transition:all .18s;font-family:'Syne',sans-serif;
+}
+.mh-arrow:active{background:rgba(255,255,255,0.15);transform:scale(0.9)}
+.mh-dots{display:flex;gap:4px;align-items:center;flex-wrap:wrap;justify-content:center;max-width:180px}
+.mh-dot{width:5px;height:5px;border-radius:50%;background:rgba(255,255,255,0.15);transition:all .25s;cursor:pointer}
+.mh-dot.on{background:var(--g);width:18px;border-radius:99px}
 .mind-filters{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
-.mf-chip{padding:6px 12px;border-radius:99px;border:1px solid var(--border);background:var(--card);font-size:11px;font-weight:500;color:var(--ink2);cursor:pointer;transition:all .15s;font-family:'DM Sans',sans-serif}
+.mf-chip{
+  padding:6px 14px;border-radius:99px;border:1px solid var(--border);
+  background:var(--card);font-family:'DM Mono',monospace;font-size:9px;
+  font-weight:500;color:var(--ink2);cursor:pointer;transition:all .18s;
+  letter-spacing:.08em;text-transform:uppercase;
+}
+.mf-chip:active{transform:scale(0.94)}
 .mf-chip.on{background:var(--ink);color:var(--bg);border-color:var(--ink)}
-.mind-card{background:var(--card);border:1px solid var(--border);border-radius:var(--r-lg);padding:16px;margin-bottom:8px;box-shadow:var(--shadow);cursor:pointer;transition:all .18s}
-.mind-card.expanded{border-color:var(--g28)}
+.mind-card{
+  background:var(--card);border:1px solid var(--border);border-radius:16px;
+  padding:18px;margin-bottom:8px;box-shadow:var(--shadow);cursor:pointer;transition:all .2s;
+}
+.mind-card.expanded{border-color:var(--g-mid)}
 .mind-card:active{transform:scale(0.99)}
-.mc-top{display:flex;align-items:flex-start;gap:10px}
-.mc-cat-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;margin-top:5px}
+.mc-top{display:flex;align-items:flex-start;gap:12px}
+.mc-cat-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;margin-top:6px}
 .mc-body{flex:1;min-width:0}
-.mc-tag{font-size:9px;font-weight:500;letter-spacing:.1em;margin-bottom:5px}
-.mc-title{font-size:15px;font-weight:500;color:var(--ink);line-height:1.4}
-.mc-read-btn{width:22px;height:22px;border-radius:50%;border:1.5px solid var(--border);background:var(--card);display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;transition:all .15s;cursor:pointer}
-.mc-read-btn.done{background:var(--g);border-color:var(--g)}
-.mc-expand{display:none;margin-top:12px;padding-top:12px;border-top:1px solid var(--border)}
+.mc-tag{font-family:'DM Mono',monospace;font-size:8px;font-weight:500;letter-spacing:.14em;margin-bottom:5px;text-transform:uppercase}
+.mc-title{font-size:14px;font-weight:700;color:var(--ink);line-height:1.4;font-family:'Syne',sans-serif}
+.mc-read-btn{
+  width:24px;height:24px;border-radius:50%;border:1.5px solid var(--border2);
+  background:var(--card);display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;margin-top:2px;transition:all .18s;cursor:pointer;
+}
+.mc-read-btn.done{background:var(--g);border-color:var(--g);box-shadow:0 0 8px rgba(0,200,150,0.3)}
+.mc-expand{display:none;margin-top:14px;padding-top:14px;border-top:1px solid var(--border)}
 .mind-card.expanded .mc-expand{display:block}
-.mc-truth{font-size:13px;color:var(--ink2);line-height:1.7;margin-bottom:10px}
-.mc-reflect{background:var(--g10);border-left:3px solid var(--g);padding:10px 12px;border-radius:0 var(--r-md) var(--r-md) 0}
-.mc-reflect-label{font-size:9px;font-weight:500;letter-spacing:.1em;color:var(--g);margin-bottom:4px}
-.mc-reflect-q{font-size:12px;color:var(--ink);font-style:italic;line-height:1.6}
+.mc-truth{font-size:13px;color:var(--ink2);line-height:1.75;margin-bottom:12px;font-family:'Syne',sans-serif}
+.mc-reflect{background:var(--g-dim);border-left:2.5px solid var(--g);padding:12px 14px;border-radius:0 12px 12px 0}
+.mc-reflect-label{font-family:'DM Mono',monospace;font-size:8px;font-weight:500;letter-spacing:.16em;color:var(--g);margin-bottom:5px;text-transform:uppercase}
+.mc-reflect-q{font-family:'Cormorant Garamond',serif;font-size:15px;color:var(--ink);font-style:italic;line-height:1.65}
 
-/* PAST HABITS ENTRY */
-.past-day-entry{background:var(--card);border:1px solid var(--border);border-radius:var(--r-lg);padding:14px;margin-bottom:6px;box-shadow:var(--shadow)}
+/* ===== PAST DAYS ===== */
+.past-day-entry{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:14px;padding:14px 16px;margin-bottom:6px;box-shadow:var(--shadow);
+}
 .pde-head{display:flex;justify-content:space-between;align-items:center;cursor:pointer}
-.pde-date{font-size:13px;font-weight:500;color:var(--ink)}
-.pde-score{display:flex;align-items:center;gap:6px;font-size:12px}
+.pde-date{font-size:13px;font-weight:600;color:var(--ink);font-family:'Syne',sans-serif}
+.pde-score{display:flex;align-items:center;gap:8px}
 .pde-dots{display:flex;gap:3px}
 .pdot{width:8px;height:8px;border-radius:50%}
-.pde-body{display:none;margin-top:10px;padding-top:10px;border-top:1px solid var(--border)}
+.pde-body{display:none;margin-top:12px;padding-top:12px;border-top:1px solid var(--border)}
 .pde-body.open{display:block}
-.pde-habit-row{display:flex;align-items:center;gap:8px;padding:5px 0;font-size:13px}
+.pde-habit-row{display:flex;align-items:center;gap:10px;padding:5px 0;font-size:12px;font-family:'Syne',sans-serif}
 .pde-hck{width:14px;height:14px;border-radius:50%;flex-shrink:0}
 </style>
 </head>
@@ -342,6 +678,7 @@ body.dark{
 <!-- RELAPSE MODAL -->
 <div class="modal-overlay" id="relapse-modal">
   <div class="modal-box">
+    <div class="modal-handle"></div>
     <div class="modal-title">Log a slip</div>
     <div class="modal-sub">This is not failure — this is data. Logging it honestly is the first step back up. You're still in the game.</div>
     <div class="modal-q">What happened? (optional)</div>
@@ -382,16 +719,15 @@ body.dark{
   <div class="tab" onclick="nav('stats',this)">Stats</div>
   <div class="tab" onclick="nav('mind',this)">Mind</div>
   <div class="tab" onclick="nav('triggers',this)">Triggers</div>
-  <div class="tab" onclick="nav('review',this)" id="tab-review">Review</div>
+  <div class="tab" onclick="nav('review',this)">Review</div>
 </div>
 
 <!-- ====== HOME ====== -->
 <div class="page on" id="pg-home">
 <div class="wrap">
   <div class="hero">
-    <div class="h-ring"></div><div class="h-blob"></div><div class="h-blob2"></div>
-    <div class="h-eye">DISCIPLINE RESET · MAR 13 — SEP 13</div>
-    <div class="h-title">I am <b>built</b><br>for this.</div>
+    <div class="h-eye">DISCIPLINE RESET · JUN 2 — DEC 31, 2026</div>
+    <div class="h-title">I am <em>built</em><br>for this.</div>
     <div class="h-stats">
       <div class="hcell"><div class="hcell-n" id="hn-s">0</div><div class="hcell-l">STREAK</div></div>
       <div class="hcell"><div class="hcell-n" id="hn-w">0</div><div class="hcell-l">WINS</div></div>
@@ -412,9 +748,8 @@ body.dark{
   <div id="today-progress"></div>
   <div class="hlist" id="hlist"></div>
 
-  <!-- RELAPSE SECTION -->
   <div class="relapse-section">
-    <div class="sec-l" style="margin-bottom:8px">ACCOUNTABILITY</div>
+    <div class="sec-l" style="margin-bottom:10px">ACCOUNTABILITY</div>
     <div id="relapse-today-status"></div>
     <button class="relapse-btn" id="relapse-open-btn" onclick="openRelapseModal()">I watched porn / masturbated today</button>
   </div>
@@ -456,30 +791,26 @@ body.dark{
   <div class="cgrid" id="cgrid"></div>
   <div class="legend-row">
     <div class="legend-item"><div class="legend-dot" style="background:var(--g)"></div> Full win</div>
-    <div class="legend-item"><div class="legend-dot" style="background:rgba(29,158,117,0.35)"></div> Partial</div>
-    <div class="legend-item"><div class="legend-dot" style="background:rgba(226,75,74,0.5)"></div> Relapsed</div>
+    <div class="legend-item"><div class="legend-dot" style="background:rgba(0,200,150,0.35)"></div> Partial</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--red)"></div> Relapsed</div>
     <div class="legend-item"><div class="legend-dot" style="background:var(--bg3)"></div> No data</div>
   </div>
-
   <div class="graph-wrap" style="margin-top:16px">
-    <div class="graph-title">Streak over time (last 60 days)</div>
+    <div class="graph-title">Streak over time — last 60 days</div>
     <canvas id="streakChart" height="140"></canvas>
   </div>
-
   <div class="sec"><div class="sec-l">HABIT BREAKDOWN</div><div class="sec-r" id="miss-total"></div></div>
   <div id="habit-breakdown"></div>
-
   <div class="sec" style="margin-top:16px"><div class="sec-l">PAST DAYS</div><div class="sec-r" id="past-days-count"></div></div>
   <div id="past-days-list"></div>
-
-  <div class="foot"><div id="stats-foot" style="font-size:11px;color:var(--ink3);padding:8px 0"></div></div>
+  <div class="foot"><div id="stats-foot" style="font-family:'DM Mono',monospace;font-size:9px;color:var(--ink3);padding:8px 0;letter-spacing:.06em"></div></div>
 </div>
 </div>
 
 <!-- ====== MIND ====== -->
 <div class="page" id="pg-mind">
 <div class="wrap">
-  <div class="mind-hero" id="mind-hero" style="margin-top:16px">
+  <div class="mind-hero" id="mind-hero">
     <div class="mh-eye" id="mh-category"></div>
     <div class="mh-day" id="mh-day-label"></div>
     <div class="mh-quote" id="mh-quote"></div>
@@ -498,7 +829,7 @@ body.dark{
   <div class="mind-filters" id="mind-filters"></div>
   <div id="mind-cards"></div>
   <div class="foot">
-    <div style="font-size:13px;color:var(--ink2);padding:8px 0;font-style:italic;font-family:'Playfair Display',serif">"The mind is the battlefield. Win there first."</div>
+    <div style="font-family:'Cormorant Garamond',serif;font-size:15px;color:var(--ink2);padding:8px 0;font-style:italic">"The mind is the battlefield. Win there first."</div>
   </div>
 </div>
 </div>
@@ -507,7 +838,6 @@ body.dark{
 <div class="page" id="pg-triggers">
 <div class="wrap">
   <div class="sec" style="margin-top:16px"><div class="sec-l">URGE RESPONSE</div></div>
-
   <button class="urge-btn" id="urge-btn" onclick="toggleUrge()">I'm feeling an urge — activate response</button>
   <div class="urge-steps" id="urge-steps">
     <div class="ustep"><div class="unum">1</div><div><div class="ustep-t">Stand up immediately</div><div class="ustep-s">Get your body moving</div></div></div>
@@ -517,12 +847,10 @@ body.dark{
     <div class="ustep"><div class="unum">5</div><div><div class="ustep-t">Wait 10 minutes</div><div class="ustep-s">Urges are waves — don't feed them</div></div></div>
     <button class="timer-btn" id="timer-btn" onclick="startTimer()">Start 10-minute timer</button>
   </div>
-
   <div class="sec"><div class="sec-l">YOUR TRIGGERS</div></div>
-
   <div class="trig-card">
     <div class="trig-head">
-      <div class="trig-icon" style="background:rgba(226,75,74,.1)">📵</div>
+      <div class="trig-icon" style="background:rgba(255,71,87,.1)">📵</div>
       <div class="trig-body">
         <div class="trig-title">Sexual content online</div>
         <div class="trig-sub">Unfollow accounts. Use "not interested" on suggestive content. No random feed exploring at night.</div>
@@ -533,10 +861,9 @@ body.dark{
       <div class="trig-action-text">Close the app immediately. Activate urge response above.</div>
     </div>
   </div>
-
   <div class="trig-card">
     <div class="trig-head">
-      <div class="trig-icon" style="background:rgba(186,117,23,.1)">😶</div>
+      <div class="trig-icon" style="background:rgba(255,176,32,.1)">😶</div>
       <div class="trig-body">
         <div class="trig-title">Boredom and idle time</div>
         <div class="trig-sub">Managed boredom is a weapon. Do not scroll when bored.</div>
@@ -547,10 +874,9 @@ body.dark{
       <div class="trig-action-text">Practice a skill · Read 10 pages · Exercise · Work on Oversize Plus · Clean something</div>
     </div>
   </div>
-
   <div class="trig-card">
     <div class="trig-head">
-      <div class="trig-icon" style="background:rgba(55,138,221,.1)">🎮</div>
+      <div class="trig-icon" style="background:rgba(91,127,232,.1)">🎮</div>
       <div class="trig-body">
         <div class="trig-title">Gaming emotional spikes</div>
         <div class="trig-sub">Gaming is entertainment, not escape. Max 1–2 hours. Move after every match.</div>
@@ -561,10 +887,9 @@ body.dark{
       <div class="trig-action-text">Never game late at night. Set a timer before you start.</div>
     </div>
   </div>
-
   <div class="trig-card">
     <div class="trig-head">
-      <div class="trig-icon" style="background:rgba(29,158,117,.1)">🌙</div>
+      <div class="trig-icon" style="background:rgba(0,200,150,.1)">🌙</div>
       <div class="trig-body">
         <div class="trig-title">Late-night phone use</div>
         <div class="trig-sub">Movies will not control your sleep. Screens off 30 min before bed.</div>
@@ -575,9 +900,8 @@ body.dark{
       <div class="trig-action-text">Read a book · Quiet reflection · Sleep when tired</div>
     </div>
   </div>
-
   <div class="foot">
-    <div style="font-size:13px;color:var(--ink2);padding:8px 0;font-style:italic;font-family:'Playfair Display',serif">"If I control what I see, I control what my brain thinks about."</div>
+    <div style="font-family:'Cormorant Garamond',serif;font-size:15px;color:var(--ink2);padding:8px 0;font-style:italic">"If I control what I see, I control what my brain thinks about."</div>
   </div>
 </div>
 </div>
@@ -585,37 +909,29 @@ body.dark{
 <!-- ====== WEEKLY REVIEW ====== -->
 <div class="page" id="pg-review">
 <div class="wrap">
-
   <div class="sunday-banner" id="sunday-banner">
     <div class="sb-eye">IT'S SUNDAY</div>
     <div class="sb-text">Time for your weekly review. Honesty now = growth next week.</div>
   </div>
-
   <div class="sec" style="margin-top:16px">
     <div class="sec-l">THIS WEEK'S REVIEW</div>
     <div class="sec-r" id="review-week-label"></div>
   </div>
-
   <div class="review-week" id="current-review">
     <div class="rw-head">
       <div class="rw-label">How consistent were you this week?</div>
     </div>
     <div class="rw-score" id="score-dots"></div>
-
     <div class="rw-q">1. Did you follow your system?</div>
     <textarea class="rw-ta" id="rw-q1" placeholder="Be honest. What did you actually do?"></textarea>
-
     <div class="rw-q">2. What triggered urges or slips this week?</div>
     <textarea class="rw-ta" id="rw-q2" placeholder="Name the trigger. When did it hit? What happened?"></textarea>
-
     <div class="rw-q">3. What one change will you make next week?</div>
     <textarea class="rw-ta" id="rw-q3" placeholder="One specific, actionable change. Not a vague goal."></textarea>
-
     <button class="rw-save" onclick="saveReview()">Save this week's review</button>
   </div>
 
-  <!-- RELAPSE TRACKER IN REVIEW -->
-  <div class="sec" style="margin-top:20px">
+  <div class="sec" style="margin-top:22px">
     <div class="sec-l">RELAPSE TRACKER</div>
     <div class="sec-r" id="relapse-week-count"></div>
   </div>
@@ -628,21 +944,17 @@ body.dark{
     <div id="relapse-chart-wrap" style="margin-top:12px"></div>
   </div>
 
-  <div class="sec" style="margin-top:20px">
+  <div class="sec" style="margin-top:22px">
     <div class="sec-l">PAST REVIEWS</div>
     <div class="sec-r" id="review-count"></div>
   </div>
   <div id="past-reviews-wrap"></div>
 
-  <!-- SPIRITUAL GROWTH -->
-  <div class="sec" style="margin-top:20px">
+  <div class="sec" style="margin-top:22px">
     <div class="sec-l">SPIRITUAL GROWTH PLAN</div>
     <div class="sec-r" id="sp-progress"></div>
   </div>
-
-  <div class="sp-intro">
-    Fix the foundation → identity → relationship → mindset. Read small. Apply one thing daily.
-  </div>
+  <div class="sp-intro">Fix the foundation → identity → relationship → mindset. Read small. Apply one thing daily.</div>
 
   <div class="sp-phase" id="sp-phase-1">
     <div class="sp-phase-head" onclick="togglePhase('sp-phase-1')">
@@ -716,12 +1028,10 @@ body.dark{
     <div class="sp-how-row"><span class="sp-how-n">4</span><span>Apply ONE thing that day — if you don't apply, you're just collecting information</span></div>
   </div>
 
-  <!-- BACKUP SECTION -->
-  <div class="sec" style="margin-top:20px"><div class="sec-l">DATA BACKUP</div></div>
-
+  <div class="sec" style="margin-top:22px"><div class="sec-l">DATA BACKUP</div></div>
   <div class="backup-card">
     <div class="bk-title">Export your progress</div>
-    <div class="bk-sub">Save all your data — streaks, wins, habit records, reviews — to a file on your device. Do this regularly so you never lose progress again.</div>
+    <div class="bk-sub">Save all your data — streaks, wins, habit records, reviews — to a file on your device.</div>
     <div class="bk-row">
       <button class="bk-btn export" onclick="exportData()">⬇ Export backup</button>
       <button class="bk-btn import" onclick="document.getElementById('import-file').click()">⬆ Restore backup</button>
@@ -729,12 +1039,15 @@ body.dark{
     <input type="file" id="import-file" accept=".json" style="display:none" onchange="importData(event)"/>
     <div class="bk-note" id="bk-note">Last export: never · Tap Export to save a .json file you can restore anytime.</div>
   </div>
-
   <div class="foot"><button onclick="resetAll()">reset all data</button></div>
 </div>
 </div>
 
 <script>
+// ===== CONSTANTS =====
+const JOURNEY_START='2026-06-02';
+const JOURNEY_END='2026-12-31';
+
 const PROMPTS=[
   "Nobody in church is watching you. They're fighting their own silent war. What would you do today if you truly believed that?",
   "You said you're full of surprises. Name one thing you've been hiding from yourself that you're actually capable of.",
@@ -768,14 +1081,14 @@ const HABITS=[
 ];
 
 const BLOCKS=[
-  {id:"morning",label:"MORNING",color:"#1D9E75",tasks:["Wake up","Prayer / quiet reflection","Make bed","50 push-ups"]},
-  {id:"midday",label:"MIDDAY",color:"#378ADD",tasks:["Work / learning session","Shopify course (30 min)","Skill study"]},
-  {id:"evening",label:"EVENING",color:"#BA7517",tasks:["Reading (10 pages)","10 min journaling","10 min reflection"]},
-  {id:"night",label:"NIGHT",color:"#533AB7",tasks:["Screens off 30 min before bed","Read or reflect quietly","Sleep when tired"]}
+  {id:"morning",label:"MORNING",color:"#00C896",tasks:["Wake up","Prayer / quiet reflection","Make bed","50 push-ups"]},
+  {id:"midday",label:"MIDDAY",color:"#5B7FE8",tasks:["Work / learning session","Shopify course (30 min)","Skill study"]},
+  {id:"evening",label:"EVENING",color:"#FFB020",tasks:["Reading (10 pages)","10 min journaling","10 min reflection"]},
+  {id:"night",label:"NIGHT",color:"#8B5CF6",tasks:["Screens off 30 min before bed","Read or reflect quietly","Sleep when tired"]}
 ];
 
-const K='dr_v8';
-function def(){return{wins:[],missedDays:[],streak:0,totalMins:0,checked:[],todos:{morning:[],midday:[],evening:[],night:[]},habitMisses:{},habitDoneByDay:{},reviews:[],spRead:[],relapses:[],mindRead:[],mindExpanded:[],lastExport:null,theme:'system'}}
+const K='dr_v9';
+function def(){return{wins:[],missedDays:[],streak:0,totalMins:0,checked:[],todos:{morning:[],midday:[],evening:[],night:[]},habitMisses:{},habitDoneByDay:{},reviews:[],spRead:[],relapses:[],mindRead:[],mindExpanded:[],lastExport:null,theme:'system',lastCheckedDate:null}}
 function load(){try{const d=JSON.parse(localStorage.getItem(K)||'{}');return Object.assign(def(),d);}catch{return def();}}
 function save(){localStorage.setItem(K,JSON.stringify(S))}
 let S=load();
@@ -783,19 +1096,12 @@ const today=new Date().toISOString().slice(0,10);
 const mq=window.matchMedia('(prefers-color-scheme: dark)');
 let urgeOpen=false,timerInterval=null,timerSecs=600;
 
-// ---- AUTO-CLOSE PREVIOUS DAY ----
-// When app opens, snapshot any checked habits from yesterday if not yet saved
 function autoClosePastDay(){
   if(!S.habitDoneByDay)S.habitDoneByDay={};
-  // If there are checked habits and lastCheckedDate != today, save them under that date
   const lcd=S.lastCheckedDate;
   if(lcd && lcd!==today && S.checked && S.checked.length>0){
     S.habitDoneByDay[lcd]=S.checked.slice();
     S.checked=[];
-    // Auto-mark that day in wins if not already — partial counts as tracked
-    if(!S.wins.includes(lcd)){
-      // Don't add to wins (it wasn't explicitly completed), just record habits
-    }
     save();
   }
   S.lastCheckedDate=today;
@@ -828,8 +1134,10 @@ function render(){
   const DAYS=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
   const MONTHS=['January','February','March','April','May','June','July','August','September','October','November','December'];
   document.getElementById('tday').textContent=DAYS[now.getDay()];
-  document.getElementById('tdate').innerHTML=now.getDate()+' '+MONTHS[now.getMonth()]+'<br>'+now.getFullYear();
-  const left=Math.max(0,Math.ceil((new Date('2026-09-13')-now)/864e5));
+  document.getElementById('tdate').textContent=now.getDate()+' '+MONTHS[now.getMonth()]+', '+now.getFullYear();
+  
+  const endDate=new Date(JOURNEY_END+'T23:59:59');
+  const left=Math.max(0,Math.ceil((endDate-now)/864e5));
   document.getElementById('hn-l').textContent=left;
   document.getElementById('hn-s').textContent=S.streak||0;
   document.getElementById('hn-w').textContent=S.wins.length;
@@ -855,7 +1163,7 @@ function renderTodayProgress(){
   const pct=Math.round((done/HABITS.length)*100);
   const wrap=document.getElementById('today-progress');
   if(done===0){wrap.innerHTML='';return;}
-  const color=pct>=100?'var(--g)':pct>=50?'var(--warn)':'var(--danger)';
+  const color=pct>=100?'var(--g)':pct>=50?'var(--amber)':'var(--red)';
   wrap.innerHTML=`<div class="day-summary">
     <div class="ds-label">${done} done</div>
     <div class="ds-bar-bg"><div class="ds-bar-f" style="width:${pct}%;background:${color}"></div></div>
@@ -867,7 +1175,7 @@ function renderHabits(){
   const list=document.getElementById('hlist');
   list.innerHTML='';
   let done=0;
-  HABITS.forEach(h=>{
+  HABITS.forEach((h,i)=>{
     const isDone=S.checked.includes(h.id);
     const isMissed=(S.habitMisses||{})[today]&&S.habitMisses[today].includes(h.id);
     if(isDone)done++;
@@ -876,10 +1184,14 @@ function renderHabits(){
     d.dataset.id=h.id;
     d.onclick=()=>tog(d);
     d.innerHTML=`<div class="hck">
-      <svg class="tick" viewBox="0 0 10 10" fill="none" stroke="#fff" stroke-width="2.5"><polyline points="1.5,5 4,7.5 8.5,2.5"/></svg>
+      <svg class="tick" viewBox="0 0 10 10" fill="none" stroke="#fff" stroke-width="2.5" width="11" height="11"><polyline points="1.5,5 4,7.5 8.5,2.5"/></svg>
       <span class="miss-x">✕</span>
     </div>
-    <div class="hb"><div class="hn">${h.n}</div><div class="hsub">${h.s}</div></div>`;
+    <div class="hb">
+      <div class="hn">${h.n}</div>
+      <div class="hsub">${h.s}</div>
+    </div>
+    <div class="habit-num">${String(i+1).padStart(2,'0')}</div>`;
     list.appendChild(d);
   });
   document.getElementById('hcount').textContent=done+' / 7';
@@ -903,31 +1215,19 @@ function tog(el){
   save();renderHabits();renderTodayProgress();
 }
 
-// ---- RELAPSE MODAL ----
 function openRelapseModal(){
   document.getElementById('modal-what').value='';
   document.getElementById('modal-next').value='';
   document.getElementById('relapse-modal').classList.add('open');
 }
-function closeRelapseModal(){
-  document.getElementById('relapse-modal').classList.remove('open');
-}
+function closeRelapseModal(){document.getElementById('relapse-modal').classList.remove('open');}
 function confirmRelapse(){
   if(!S.relapses)S.relapses=[];
   const what=document.getElementById('modal-what').value.trim();
   const next=document.getElementById('modal-next').value.trim();
-  // Remove existing relapse for today if any (can update)
   S.relapses=S.relapses.filter(r=>r.date!==today);
-  S.relapses.push({
-    date:today,
-    what:what||'',
-    next:next||'',
-    habitsCompleted:S.checked.length,
-    loggedAt:new Date().toISOString()
-  });
-  save();
-  closeRelapseModal();
-  renderTodayRelapse();
+  S.relapses.push({date:today,what:what||'',next:next||'',habitsCompleted:S.checked.length,loggedAt:new Date().toISOString()});
+  save();closeRelapseModal();renderTodayRelapse();
 }
 function renderTodayRelapse(){
   const todayRelapse=(S.relapses||[]).find(r=>r.date===today);
@@ -936,17 +1236,15 @@ function renderTodayRelapse(){
   if(todayRelapse){
     btn.textContent='Update today\'s accountability log';
     btn.style.borderStyle='solid';
-    btn.style.borderColor='rgba(226,75,74,0.5)';
     statusEl.innerHTML=`<div class="relapse-logged show">
       <div class="rl-label">LOGGED TODAY</div>
-      <div class="rl-text">${todayRelapse.what?'What happened: '+todayRelapse.what:''}</div>
+      ${todayRelapse.what?`<div class="rl-text">What happened: ${todayRelapse.what}</div>`:''}
       ${todayRelapse.next?`<div class="rl-text" style="margin-top:4px;color:var(--g)">Next time: ${todayRelapse.next}</div>`:''}
-      <div class="rl-text" style="margin-top:6px;font-style:italic;color:var(--ink3)">"The man who falls and gets up is stronger than the man who never fell."</div>
+      <div class="rl-text" style="margin-top:8px;font-style:italic;color:var(--ink3);font-family:'Cormorant Garamond',serif;font-size:14px">"The man who falls and gets up is stronger than the man who never fell."</div>
     </div>`;
   } else {
     btn.textContent='I watched porn / masturbated today';
     btn.style.borderStyle='dashed';
-    btn.style.borderColor='rgba(226,75,74,0.4)';
     statusEl.innerHTML='';
   }
 }
@@ -962,7 +1260,6 @@ function addMins(){
 function logDay(){
   if(S.wins.includes(today))return;
   S.wins.push(today);
-  // Save today's checked habits snapshot
   if(!S.habitDoneByDay)S.habitDoneByDay={};
   S.habitDoneByDay[today]=S.checked.slice();
   const y=new Date();y.setDate(y.getDate()-1);
@@ -991,9 +1288,9 @@ function renderPlan(){
     const doneCount=todos.filter(t=>t.done).length;
     const card=document.createElement('div');
     card.className='timeblock';
-    const tasksHtml=b.tasks.map(t=>`<div class="todo-row"><div class="todo-cb chk"><svg viewBox="0 0 10 10" fill="none" stroke="#fff" stroke-width="2.5" width="8" height="8"><polyline points="1.5,5 4,7.5 8.5,2.5"/></svg></div><div class="todo-txt" style="color:var(--ink2)">${t}</div></div>`).join('');
+    const tasksHtml=b.tasks.map(t=>`<div class="todo-row"><div class="todo-cb chk"><svg viewBox="0 0 10 10" fill="none" stroke="#fff" stroke-width="2.5" width="8" height="8"><polyline points="1.5,5 4,7.5 8.5,2.5"/></svg></div><div class="todo-txt" style="color:var(--ink3)">${t}</div></div>`).join('');
     const customHtml=todos.map((t,i)=>`<div class="todo-row">
-      <div class="todo-cb${t.done?' chk':''}" onclick="toggleTodo('${b.id}',${i})" style="cursor:pointer">${t.done?'<svg viewBox="0 0 10 10" fill="none" stroke="#fff" stroke-width="2.5" width="8" height="8"><polyline points="1.5,5 4,7.5 8.5,2.5"/></svg>':''}</div>
+      <div class="todo-cb${t.done?' chk':''}" onclick="toggleTodo('${b.id}',${i})">${t.done?'<svg viewBox="0 0 10 10" fill="none" stroke="#fff" stroke-width="2.5" width="8" height="8"><polyline points="1.5,5 4,7.5 8.5,2.5"/></svg>':''}</div>
       <div class="todo-txt"${t.done?' style="text-decoration:line-through;color:var(--ink3)"':''}>${t.text}</div>
       <button class="todo-del" onclick="deleteTodo('${b.id}',${i})">✕</button>
     </div>`).join('');
@@ -1005,7 +1302,7 @@ function renderPlan(){
       </div>
       <div class="todos">${tasksHtml}${customHtml}</div>
       <div class="add-row">
-        <input class="add-inp" id="inp-${b.id}" placeholder="Add task to ${b.label.toLowerCase()}..." onkeydown="if(event.key==='Enter')addTodo('${b.id}')"/>
+        <input class="add-inp" id="inp-${b.id}" placeholder="Add task..." onkeydown="if(event.key==='Enter')addTodo('${b.id}')"/>
         <button class="add-btn" onclick="addTodo('${b.id}')">+</button>
       </div>`;
     wrap.appendChild(card);
@@ -1014,8 +1311,7 @@ function renderPlan(){
 
 function addTodo(blockId){
   const inp=document.getElementById('inp-'+blockId);
-  const txt=inp.value.trim();
-  if(!txt)return;
+  const txt=inp.value.trim();if(!txt)return;
   if(!S.todos)S.todos={morning:[],midday:[],evening:[],night:[]};
   if(!S.todos[blockId])S.todos[blockId]=[];
   S.todos[blockId].push({text:txt,done:false,date:today});
@@ -1028,7 +1324,6 @@ function clearDoneTodos(){if(!S.todos)return;Object.keys(S.todos).forEach(k=>{S.
 function getHabitsDoneForDay(ds){
   if(!S.habitDoneByDay)return null;
   if(S.habitDoneByDay[ds])return S.habitDoneByDay[ds];
-  // fallback: check habitMisses
   return null;
 }
 
@@ -1040,24 +1335,21 @@ function renderStats(){
   for(let i=27;i>=0;i--){
     const d=new Date(now);d.setDate(d.getDate()-i);
     const ds=d.toISOString().slice(0,10);
-    const div=document.createElement('div');
-    div.className='cd';
+    const div=document.createElement('div');div.className='cd';
     const hasRelapse=(S.relapses||[]).some(r=>r.date===ds);
-    if(hasRelapse){div.classList.add('relapsed');}
+    if(hasRelapse)div.classList.add('relapsed');
     else if(S.wins.includes(ds)){div.classList.add('win');wins++;}
-    else if(ds===today){div.classList.add('cur');}
-    else {
-      // Check if partial habit day
+    else if(ds===today)div.classList.add('cur');
+    else{
       const done=getHabitsDoneForDay(ds);
-      if(done&&done.length>0&&done.length<HABITS.length){div.classList.add('partial');}
-      else if((S.missedDays||[]).includes(ds)){div.classList.add('missed-day');}
+      if(done&&done.length>0&&done.length<HABITS.length)div.classList.add('partial');
+      else if((S.missedDays||[]).includes(ds))div.classList.add('missed-day');
     }
     cgrid.appendChild(div);
   }
   document.getElementById('winrate').textContent=Math.round((wins/28)*100)+'% win rate';
 
-  const labels=[],data=[];
-  let runStreak=0;
+  const labels=[],data=[];let runStreak=0;
   for(let i=59;i>=0;i--){
     const d=new Date(now);d.setDate(d.getDate()-i);
     const ds=d.toISOString().slice(0,10);
@@ -1070,8 +1362,8 @@ function renderStats(){
   const isDark=document.body.classList.contains('dark');
   window._streakChart=new Chart(ctx,{
     type:'line',
-    data:{labels,datasets:[{data,borderColor:'#1D9E75',backgroundColor:'rgba(29,158,117,0.1)',borderWidth:2,pointRadius:0,fill:true,tension:0.3}]},
-    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{title:i=>[i[0].label],label:i=>'Streak: '+i.raw}}},scales:{x:{display:false},y:{beginAtZero:true,ticks:{stepSize:1,color:isDark?'#666':'#999',font:{size:11}},grid:{color:isDark?'rgba(255,255,255,0.05)':'rgba(0,0,0,0.05)'}}}}
+    data:{labels,datasets:[{data,borderColor:'#00C896',backgroundColor:'rgba(0,200,150,0.08)',borderWidth:2,pointRadius:0,fill:true,tension:0.4}]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{display:false},y:{beginAtZero:true,ticks:{stepSize:1,color:isDark?'#555570':'#8888a0',font:{size:10,family:'DM Mono'}},grid:{color:isDark?'rgba(255,255,255,0.04)':'rgba(10,10,15,0.04)'}}}}
   });
 
   const hb=document.getElementById('habit-breakdown');
@@ -1084,15 +1376,19 @@ function renderStats(){
     const totalDays=S.wins.length;
     const pct=totalDays>0?Math.round(((totalDays-misses)/Math.max(totalDays,1))*100):0;
     const row=document.createElement('div');
-    row.style.cssText='display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--card);border:1px solid var(--border);border-radius:var(--r-md);margin-bottom:6px;box-shadow:var(--shadow)';
-    row.innerHTML=`<div style="flex:1;min-width:0"><div style="font-size:13px;font-weight:500;color:var(--ink)">${h.n}</div><div style="margin-top:4px;height:4px;background:var(--bg3);border-radius:99px;overflow:hidden"><div style="height:100%;width:${pct}%;background:var(--g);border-radius:99px"></div></div></div><div style="font-size:11px;color:${misses>0?'var(--danger)':'var(--ink3)'};white-space:nowrap">${misses>0?misses+' missed':'clean'}</div>`;
+    row.style.cssText='display:flex;align-items:center;gap:12px;padding:12px 16px;background:var(--card);border:1px solid var(--border);border-radius:12px;margin-bottom:6px;box-shadow:var(--shadow)';
+    row.innerHTML=`<div style="flex:1;min-width:0">
+      <div style="font-size:13px;font-weight:600;color:var(--ink);font-family:\'Syne\',sans-serif;margin-bottom:5px">${h.n}</div>
+      <div style="height:3px;background:var(--bg3);border-radius:99px;overflow:hidden">
+        <div style="height:100%;width:${pct}%;background:var(--g);border-radius:99px"></div>
+      </div>
+    </div>
+    <div style="font-family:\'DM Mono\',monospace;font-size:10px;color:${misses>0?'var(--red)':'var(--ink3)'};white-space:nowrap;letter-spacing:.06em">${misses>0?misses+' missed':'clean'}</div>`;
     hb.appendChild(row);
   });
   document.getElementById('miss-total').textContent=totalMisses>0?totalMisses+' total misses':'All clean';
-
-  // Past days list
   renderPastDaysList();
-  document.getElementById('stats-foot').textContent='Dark green = full win · Faded green = partial · Red = relapse · Border = today';
+  document.getElementById('stats-foot').textContent='GREEN = WIN · FADED = PARTIAL · RED = RELAPSE · BORDER = TODAY';
 }
 
 function renderPastDaysList(){
@@ -1111,7 +1407,7 @@ function renderPastDaysList(){
   }
   document.getElementById('past-days-count').textContent=allDays.length>0?allDays.length+' days tracked':'';
   if(allDays.length===0){
-    wrap.innerHTML='<div style="font-size:13px;color:var(--ink3);padding:8px 0">Your daily habit history will appear here as you track.</div>';
+    wrap.innerHTML='<div style="font-family:\'Cormorant Garamond\',serif;font-size:15px;font-style:italic;color:var(--ink3);padding:8px 0">Your daily habit history will appear here as you track.</div>';
     return;
   }
   const MONTHS=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
@@ -1120,34 +1416,28 @@ function renderPastDaysList(){
     const DAYS=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
     const isWin=S.wins.includes(ds);
     const hasRelapse=(S.relapses||[]).some(r=>r.date===ds);
-    const totalTracked=doneHabits.length+missedHabits.length;
-    const pct=totalTracked>0?Math.round((doneHabits.length/HABITS.length)*100):0;
-    const card=document.createElement('div');
-    card.className='past-day-entry';
+    const pct=Math.round((doneHabits.length/HABITS.length)*100);
+    const card=document.createElement('div');card.className='past-day-entry';
     const dotsHtml=HABITS.map(h=>{
       const done=doneHabits.includes(h.id);
       const missed=missedHabits.includes(h.id);
-      const c=done?'var(--g)':missed?'var(--danger)':'var(--bg3)';
-      return `<div class="pdot" title="${h.n}" style="background:${c}"></div>`;
+      return `<div class="pdot" style="background:${done?'var(--g)':missed?'var(--red)':'var(--bg3)'}"></div>`;
     }).join('');
-    const scoreColor=isWin?'var(--g)':hasRelapse?'var(--danger)':pct>=50?'var(--warn)':'var(--ink3)';
+    const scoreColor=isWin?'var(--g)':hasRelapse?'var(--red)':pct>=50?'var(--amber)':'var(--ink3)';
     card.innerHTML=`<div class="pde-head" onclick="this.nextElementSibling.classList.toggle('open')">
       <div class="pde-date">${DAYS[d.getDay()]}, ${d.getDate()} ${MONTHS[d.getMonth()]}</div>
-      <div class="pde-score">
-        <div class="pde-dots">${dotsHtml}</div>
-        <span style="color:${scoreColor};font-size:11px;font-weight:600">${isWin?'WIN':hasRelapse?'SLIP':pct+'%'}</span>
+      <div class="pde-score"><div class="pde-dots">${dotsHtml}</div>
+        <span style="font-family:'DM Mono',monospace;color:${scoreColor};font-size:9px;font-weight:600;letter-spacing:.08em">${isWin?'WIN':hasRelapse?'SLIP':pct+'%'}</span>
       </div>
     </div>
     <div class="pde-body">
       ${HABITS.map(h=>{
         const done=doneHabits.includes(h.id);
         const missed=missedHabits.includes(h.id);
-        const c=done?'var(--g)':missed?'var(--danger)':'var(--border)';
-        const label=done?'✓':missed?'✗':'—';
-        const tc=done?'var(--g)':missed?'var(--ink3)':'var(--ink3)';
-        return `<div class="pde-habit-row"><div class="pde-hck" style="background:${c}"></div><span style="color:${tc}">${h.n}</span><span style="margin-left:auto;font-size:11px;font-weight:600;color:${c}">${label}</span></div>`;
+        const c=done?'var(--g)':missed?'var(--red)':'var(--border)';
+        return `<div class="pde-habit-row"><div class="pde-hck" style="background:${c}"></div><span style="color:${done?'var(--g)':missed?'var(--ink3)':'var(--ink3)'}">${h.n}</span><span style="margin-left:auto;font-family:'DM Mono',monospace;font-size:9px;font-weight:600;color:${c}">${done?'✓':missed?'✗':'—'}</span></div>`;
       }).join('')}
-      ${hasRelapse?`<div style="margin-top:8px;padding:8px 10px;background:rgba(226,75,74,0.06);border-radius:var(--r-md);font-size:12px;color:var(--danger)">⚠ Relapse logged this day</div>`:''}
+      ${hasRelapse?`<div style="margin-top:10px;padding:10px 12px;background:rgba(255,71,87,0.06);border-radius:10px;font-size:12px;color:var(--red);font-family:'Syne',sans-serif">⚠ Relapse logged this day</div>`:''}
     </div>`;
     wrap.appendChild(card);
   });
@@ -1171,6 +1461,7 @@ function startTimer(){
   },1000);
 }
 
+// ===== SPIRITUAL =====
 const SPIRITUAL=[
   {phase:1,passages:[
     {id:"gen1",ref:"Genesis 1–3",note:"Where you came from + why everything feels broken"},
@@ -1202,7 +1493,6 @@ const SPIRITUAL=[
 ];
 
 function togglePhase(id){document.getElementById(id).classList.toggle('open');}
-
 function togglePassage(id){
   if(!S.spRead)S.spRead=[];
   const idx=S.spRead.indexOf(id);
@@ -1254,13 +1544,13 @@ function renderSpiritualProgress(){
   document.getElementById('sp-progress').textContent=totalDone+'/'+totalAll+' read';
 }
 
+// ===== WEEK/REVIEW =====
 function getWeekKey(date){
   const d=new Date(date||Date.now());
   const day=d.getDay();
   const monday=new Date(d);monday.setDate(d.getDate()-(day===0?6:day-1));
   return monday.toISOString().slice(0,10);
 }
-
 function getWeekLabel(weekKey){
   const start=new Date(weekKey+'T12:00:00');
   const end=new Date(weekKey+'T12:00:00');end.setDate(end.getDate()+6);
@@ -1272,16 +1562,12 @@ function renderRelapseTracker(){
   const weekKey=getWeekKey();
   const weekStart=new Date(weekKey+'T00:00:00');
   const weekEnd=new Date(weekKey+'T00:00:00');weekEnd.setDate(weekEnd.getDate()+7);
-  const weekRelapses=(S.relapses||[]).filter(r=>{
-    const d=new Date(r.date+'T12:00:00');
-    return d>=weekStart&&d<weekEnd;
-  });
+  const weekRelapses=(S.relapses||[]).filter(r=>{const d=new Date(r.date+'T12:00:00');return d>=weekStart&&d<weekEnd;});
   const allRelapses=(S.relapses||[]).length;
   document.getElementById('relapse-week-count').textContent=allRelapses>0?allRelapses+' total logged':'';
   const countLabel=document.getElementById('rt-count-label');
   countLabel.textContent=weekRelapses.length>0?weekRelapses.length+' this week':'Clean this week ✓';
-  countLabel.style.color=weekRelapses.length>0?'var(--danger)':'var(--g)';
-
+  countLabel.style.color=weekRelapses.length>0?'var(--red)':'var(--g)';
   const wrap=document.getElementById('relapse-entries-wrap');
   wrap.innerHTML='';
   if(weekRelapses.length===0){
@@ -1291,44 +1577,33 @@ function renderRelapseTracker(){
     const DAYS=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
     weekRelapses.sort((a,b)=>a.date.localeCompare(b.date)).forEach(r=>{
       const d=new Date(r.date+'T12:00:00');
-      const entry=document.createElement('div');
-      entry.className='relapse-entry';
+      const entry=document.createElement('div');entry.className='relapse-entry';
       entry.innerHTML=`<div class="re-date">${DAYS[d.getDay()].toUpperCase()} ${d.getDate()} ${MONTHS[d.getMonth()].toUpperCase()}</div>
         ${r.what?`<div class="re-note">${r.what}</div>`:'<div class="re-note" style="color:var(--ink3);font-style:italic">No details logged</div>'}
         ${r.next?`<div class="re-reflection">→ Next time: ${r.next}</div>`:''}
-        ${r.habitsCompleted?`<div class="re-habits">${r.habitsCompleted} habit${r.habitsCompleted!==1?'s':''} completed that day</div>`:''}`;
+        ${r.habitsCompleted?`<div class="re-habits">${r.habitsCompleted} HABIT${r.habitsCompleted!==1?'S':''} COMPLETED THAT DAY</div>`:''}`;
       wrap.appendChild(entry);
     });
   }
-
-  // Monthly trend: relapses per week (last 8 weeks)
   const chartWrap=document.getElementById('relapse-chart-wrap');
   if(allRelapses>0){
-    const weeks=[];
-    const now=new Date();
+    const weeks=[];const now2=new Date();
     for(let w=7;w>=0;w--){
-      const wStart=new Date(now);wStart.setDate(now.getDate()-w*7-now.getDay()+(now.getDay()===0?-6:1));
-      wStart.setHours(0,0,0,0);
-      const wEnd=new Date(wStart);wEnd.setDate(wStart.getDate()+7);
+      const wStart=new Date(now2);wStart.setDate(now2.getDate()-w*7-now2.getDay()+(now2.getDay()===0?-6:1));
+      wStart.setHours(0,0,0,0);const wEnd=new Date(wStart);wEnd.setDate(wStart.getDate()+7);
       const count=(S.relapses||[]).filter(r=>{const d=new Date(r.date+'T12:00:00');return d>=wStart&&d<wEnd;}).length;
-      const MONTHS=['Jan','Feb','Mar'];
       weeks.push({label:'W'+(8-w),count});
     }
-    chartWrap.innerHTML='<div class="graph-title" style="font-size:11px;color:var(--ink3);margin-bottom:8px;letter-spacing:.08em">RELAPSES PER WEEK (LAST 8 WEEKS)</div><canvas id="relapseChart" height="80"></canvas>';
+    chartWrap.innerHTML='<div style="font-family:\'DM Mono\',monospace;font-size:9px;color:var(--ink3);margin-bottom:10px;letter-spacing:.14em;text-transform:uppercase">RELAPSES PER WEEK (LAST 8 WEEKS)</div><canvas id="relapseChart" height="80"></canvas>';
     const ctx2=document.getElementById('relapseChart').getContext('2d');
     if(window._relapseChart)window._relapseChart.destroy();
     const isDark=document.body.classList.contains('dark');
     window._relapseChart=new Chart(ctx2,{
       type:'bar',
-      data:{
-        labels:weeks.map(w=>w.label),
-        datasets:[{data:weeks.map(w=>w.count),backgroundColor:weeks.map((w,i)=>i===7?'rgba(226,75,74,0.8)':'rgba(226,75,74,0.4)'),borderRadius:4}]
-      },
-      options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:{color:isDark?'#555':'#999',font:{size:10}},grid:{display:false}},y:{beginAtZero:true,ticks:{stepSize:1,color:isDark?'#555':'#999',font:{size:10}},grid:{color:isDark?'rgba(255,255,255,0.05)':'rgba(0,0,0,0.05)'}}}}
+      data:{labels:weeks.map(w=>w.label),datasets:[{data:weeks.map(w=>w.count),backgroundColor:weeks.map((w,i)=>i===7?'rgba(255,71,87,0.9)':'rgba(255,71,87,0.35)'),borderRadius:5}]},
+      options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:{color:isDark?'#555570':'#8888a0',font:{size:9,family:'DM Mono'}},grid:{display:false}},y:{beginAtZero:true,ticks:{stepSize:1,color:isDark?'#555570':'#8888a0',font:{size:9,family:'DM Mono'}},grid:{color:isDark?'rgba(255,255,255,0.04)':'rgba(10,10,15,0.04)'}}}}
     });
-  } else {
-    chartWrap.innerHTML='';
-  }
+  } else {chartWrap.innerHTML='';}
 }
 
 function renderReview(){
@@ -1352,13 +1627,11 @@ function renderReview(){
     document.getElementById('rw-q1').value=existing.q1||'';
     document.getElementById('rw-q2').value=existing.q2||'';
     document.getElementById('rw-q3').value=existing.q3||'';
-    document.getElementById('current-review').classList.add('rw-saved');
     document.querySelector('.rw-save').textContent='Update this week\'s review';
   } else {
     document.getElementById('rw-q1').value='';
     document.getElementById('rw-q2').value='';
     document.getElementById('rw-q3').value='';
-    document.getElementById('current-review').classList.remove('rw-saved');
     document.querySelector('.rw-save').textContent='Save this week\'s review';
   }
   const past=[...S.reviews].filter(r=>r.week!==weekKey).sort((a,b)=>b.week.localeCompare(a.week));
@@ -1366,11 +1639,10 @@ function renderReview(){
   const wrap=document.getElementById('past-reviews-wrap');
   wrap.innerHTML='';
   if(past.length===0){
-    wrap.innerHTML='<div style="font-size:13px;color:var(--ink3);padding:8px 0">No past reviews yet. Complete your first one above.</div>';
+    wrap.innerHTML='<div style="font-family:\'Cormorant Garamond\',serif;font-size:15px;font-style:italic;color:var(--ink3);padding:8px 0">No past reviews yet. Complete your first one above.</div>';
   } else {
     past.forEach(r=>{
-      const card=document.createElement('div');
-      card.className='past-review';
+      const card=document.createElement('div');card.className='past-review';
       card.innerHTML=`<div class="pr-head" onclick="this.nextElementSibling.classList.toggle('open')">
         <div class="pr-week">${getWeekLabel(r.week)}</div>
         <div class="pr-score">${r.score?r.score+'/7':''} ▾</div>
@@ -1406,24 +1678,20 @@ function saveReview(){
 }
 
 function updateBackupNote(){
-  const note=document.getElementById('bk-note');
-  if(!note)return;
+  const note=document.getElementById('bk-note');if(!note)return;
   const last=S.lastExport?new Date(S.lastExport).toLocaleDateString():'never';
   note.textContent='Last export: '+last+' · Tap Export to save a .json file you can restore anytime.';
 }
-
 function exportData(){
   S.lastExport=new Date().toISOString();save();
   const blob=new Blob([JSON.stringify(S,null,2)],{type:'application/json'});
   const url=URL.createObjectURL(blob);
-  const a=document.createElement('a');
-  a.href=url;a.download='discipline_reset_backup_'+today+'.json';
-  a.click();URL.revokeObjectURL(url);
-  updateBackupNote();
+  const a=document.createElement('a');a.href=url;
+  a.download='discipline_reset_backup_'+today+'.json';
+  a.click();URL.revokeObjectURL(url);updateBackupNote();
   const btn=document.querySelector('.bk-btn.export');
   if(btn){btn.textContent='✓ Exported';setTimeout(()=>btn.textContent='⬇ Export backup',2000);}
 }
-
 function importData(e){
   const file=e.target.files[0];if(!file)return;
   const reader=new FileReader();
@@ -1440,148 +1708,43 @@ function importData(e){
   reader.readAsText(file);e.target.value='';
 }
 
-// ====== MIND PAGE ======
+// ===== MIND PAGE =====
 const MIND_CATS={
   fear:{label:'Fear & Anxiety',color:'#5B7FE8',dot:'#5B7FE8'},
-  identity:{label:'Identity',color:'#1D9E75',dot:'#1D9E75'},
-  rewire:{label:'Body & Brain',color:'#BA7517',dot:'#BA7517'},
-  bounce:{label:'Bounce Back',color:'#E24B4A',dot:'#E24B4A'},
-  consistency:{label:'Consistency',color:'#533AB7',dot:'#533AB7'}
+  identity:{label:'Identity',color:'#00C896',dot:'#00C896'},
+  rewire:{label:'Body & Brain',color:'#FFB020',dot:'#FFB020'},
+  bounce:{label:'Bounce Back',color:'#FF4757',dot:'#FF4757'},
+  consistency:{label:'Consistency',color:'#8B5CF6',dot:'#8B5CF6'}
 };
 
 const MIND_THOUGHTS=[
-  {
-    id:'m1',cat:'fear',
-    title:'Your fear is not a personality flaw.',
-    truth:'You didn\'t "become weak." Your nervous system was trained over years to associate being seen with danger. It learned: attention = threat, speaking = embarrassment. So it protects you by shutting you down. That shaking, that blank mind? Your system doing its job too well. It\'s not you failing. It\'s conditioning.',
-    reflect:'What\'s one specific moment from the past that taught your body that being seen is dangerous? Name it.'
-  },
-  {
-    id:'m2',cat:'fear',
-    title:'You can\'t think your way out of a feeling your body learned.',
-    truth:'The fear doesn\'t live in your logic. It lives in your nervous system. That\'s why "I know I\'m safe" doesn\'t stop the shaking. Your thinking brain can know you\'re fine. Your survival brain doesn\'t care — it fires before you can think. You don\'t fight it. You retrain it through repetition.',
-    reflect:'Next time fear hits, instead of arguing with it — what if you just said: "Yeah, I expected you." How does that change things?'
-  },
-  {
-    id:'m3',cat:'fear',
-    title:'Trying to turn fear off by force doesn\'t work.',
-    truth:'When you\'re alone and try to "feel afraid" nothing happens — because your survival system isn\'t triggered. But in front of people it fires automatically. You can\'t override automatic responses with willpower. You can only replace them with new evidence, repeated enough times that your brain updates its prediction.',
-    reflect:'Stop trying to be fearless. What would it look like to be brave AND shaking at the same time?'
-  },
-  {
-    id:'m4',cat:'rewire',
-    title:'Your brain has two systems. Only one listens to you.',
-    truth:'Thinking brain: logic, intention — "I\'m safe." Survival brain: automatic, faster than thought — reacts before you decide. When you\'re exposed, the survival system takes over. Heart races. Hands shake. Mind blanks. That system doesn\'t ask for permission. You don\'t beat it. You train it the same way it was trained against you — through repetition.',
-    reflect:'What\'s one small daily action that would start feeding the survival brain new evidence that you\'re safe?'
-  },
-  {
-    id:'m5',cat:'rewire',
-    title:'The wiring can be changed. Not by decision — by reps.',
-    truth:'Exposure isn\'t about not feeling fear. It\'s about staying in the discomfort long enough for your brain to update: "Nothing bad happened." At first: 100% fear. After reps: 70% → 40% → 10%. Eventually the trigger doesn\'t fire the same way. Not because you decided to be calm. Because your brain accumulated enough evidence.',
-    reflect:'Think about one thing you\'re already not afraid of that you once were. How did that shift happen?'
-  },
-  {
-    id:'m6',cat:'rewire',
-    title:'Porn doesn\'t just affect your urges. It rewires your baseline.',
-    truth:'Years of compulsive use trains the brain toward easy dopamine. Real-world effort becomes harder. Anxiety increases because the brain constantly expects a shortcut and doesn\'t find one. Confidence erodes not from laziness — but from a nervous system accustomed to reward without discomfort. You can\'t fix confidence while feeding that loop daily.',
-    reflect:'What\'s one thing in your real life that got harder to enjoy because the brain got used to something easier?'
-  },
-  {
-    id:'m7',cat:'identity',
-    title:'You are not the version of you that\'s been conditioned.',
-    truth:'The version of you that hides, shakes, and goes quiet — that\'s a trained response, not your identity. The fact that you speak well in private, think clearly, and want change proves the real version is already there. It\'s just buried under conditioning and habits. You are not broken. You are untrained.',
-    reflect:'Who were you before you learned to make yourself small? What do you remember about that version?'
-  },
-  {
-    id:'m8',cat:'identity',
-    title:'The real you already exists. Fear is just covering him.',
-    truth:'You said it yourself: you can speak in private. Think clearly alone. That means the capacity is there. The fear doesn\'t replace who you are — it mutes you temporarily. The work isn\'t to become someone new. It\'s to stop disappearing every time you\'re seen. That version is closer than you think.',
-    reflect:'If fear was gone tomorrow — not a little less, completely gone — what\'s the first thing you\'d do differently?'
-  },
-  {
-    id:'m9',cat:'identity',
-    title:'Being seen is not the same as being judged.',
-    truth:'Your brain learned to treat visibility as a threat. So now even neutral attention feels like surveillance. But most people are too caught up in their own inner noise to scrutinize you the way you fear. The judgment you\'re hiding from mostly exists inside you, not outside. The audience isn\'t as large or as harsh as your nervous system believes.',
-    reflect:'Think of the last time you judged someone harshly just for existing in a room. Did that actually happen?'
-  },
-  {
-    id:'m10',cat:'bounce',
-    title:'A slip is data, not a verdict.',
-    truth:'Every relapse, every missed day, every "I didn\'t do the rep" — it\'s not proof that you\'re weak. It\'s information. What was happening before it? What time of day? What emotion? What trigger? The person who logs it honestly and asks those questions is further along than the person who pretends it didn\'t happen.',
-    reflect:'What pattern do you notice about when you slip? Be specific — time, mood, what preceded it.'
-  },
-  {
-    id:'m11',cat:'bounce',
-    title:'Paul said: "I do what I don\'t want to do." He still wrote most of the New Testament.',
-    truth:'Romans 7 is Paul describing his own internal war — doing the thing he hates, not doing the thing he loves. He didn\'t resolve it through willpower. He resolved it through identity shift: "It is no longer I who do it, but sin living in me." He named it. He got back up. He didn\'t let the struggle define his output.',
-    reflect:'What would change if you stopped seeing your struggle as your identity and started seeing it as just the war — one you\'re still fighting?'
-  },
-  {
-    id:'m12',cat:'bounce',
-    title:'The man who falls and gets back up is stronger than the man who never fell.',
-    truth:'Every reset builds resilience if you use it right. The fall is not the end of the story — the return is. What makes a man is not whether he stayed clean for 6 months straight. It\'s whether, after the slip at 3am, he woke up the next morning and did the first habit anyway. That\'s character.',
-    reflect:'After your last slip, how fast did you get back up? What could you do to make that window shorter next time?'
-  },
-  {
-    id:'m13',cat:'consistency',
-    title:'Confidence comes after the reps. Not before.',
-    truth:'You\'re waiting to feel ready before you act. That\'s the trap. Confidence is the result of doing the thing you were afraid of, enough times, and surviving it. The feeling follows the action — never the other way. The man waiting to feel ready will wait forever. The man who acts uncomfortable is building the feeling with every rep.',
-    reflect:'Name one thing you\'ve been postponing until you "feel ready." What\'s the smallest possible version of that action you could do today?'
-  },
-  {
-    id:'m14',cat:'consistency',
-    title:'Motivation is a guest. Discipline is the house.',
-    truth:'You can\'t build anything on motivation because motivation leaves whenever it wants. It depends on mood, sleep, circumstances. Discipline is what runs the system when motivation is gone. And discipline isn\'t forced — it\'s built through small daily reps done before you feel like doing them. The days you don\'t feel it and show up anyway are the ones that build the most.',
-    reflect:'What\'s one habit you\'d do today even if you felt terrible? That\'s where your real foundation is.'
-  },
-  {
-    id:'m15',cat:'consistency',
-    title:'Small and daily beats big and occasional every time.',
-    truth:'Your brain changes through frequency, not intensity. One massive effort every two weeks builds less than one small rep every day. The body learns through repetition — not episodes. This is why the plan is about daily minimums: 1 social action, 1 physical movement, 1 habit reduced. These aren\'t goals. They\'re reps on a machine that rewires you.',
-    reflect:'What is one action so small that even on your worst day you could still do it? That\'s your non-negotiable.'
-  },
-  {
-    id:'m16',cat:'fear',
-    title:'Shame wants you to hide. Growth wants you to show up.',
-    truth:'After a slip, shame says: stay quiet, disappear, you don\'t deserve to be here. That voice is a liar. Shame keeps the loop running by isolating you. Growth says: log it, name it, show up the next morning, do the first habit anyway. The antidote to shame isn\'t perfection. It\'s accountability followed by action.',
-    reflect:'What does shame usually tell you to do after a hard day? What would accountability tell you to do instead?'
-  },
-  {
-    id:'m17',cat:'identity',
-    title:'You can\'t hate yourself into becoming someone better.',
-    truth:'Self-criticism feels productive because it\'s intense. But intensity is not the same as effectiveness. Studies show that self-compassion after failure leads to more effort and fewer future slips than self-punishment does. The internal voice that calls you weak is not your coach. It\'s the same system trying to keep you small.',
-    reflect:'What would you tell a close friend who was going through exactly what you\'re going through right now?'
-  },
-  {
-    id:'m18',cat:'rewire',
-    title:'Your brain is not fixed. It is always updating.',
-    truth:'Neuroplasticity means your brain literally reshapes itself based on what you repeatedly do. Every time you avoid, the avoidance pathway gets stronger. Every time you stay in the discomfort, the "nothing bad happened" pathway gets built. You are not locked into who you are today. You are building tomorrow\'s default responses right now.',
-    reflect:'What is one thing you\'ve already changed about yourself in the last few years — proof that your brain updates?'
-  },
-  {
-    id:'m19',cat:'bounce',
-    title:'You don\'t need a perfect past. You need the next right move.',
-    truth:'The idea that you have to "start clean" to matter is a trap. The slate doesn\'t need to be blank for today to count. You relapsed yesterday and did 5 habits today? That is the story of a man becoming. Progress is not a straight line. It\'s a direction. Stay pointed the right way.',
-    reflect:'If this week didn\'t count toward anything, what would you do differently? Now ask yourself why it actually does count.'
-  },
-  {
-    id:'m20',cat:'consistency',
-    title:'The reps you do when nobody is watching are the ones that change you.',
-    truth:'Nobody will see you pray at 6am. Nobody will see you put the phone down and pick up a book. Nobody will see you do the 50 push-ups when you\'re exhausted. But your nervous system sees every rep. Your brain records every time you chose the harder thing. Character is built in private. Reputation is just the shadow it eventually casts.',
-    reflect:'What\'s one thing you do consistently in private that the best version of you would do? Build on that.'
-  }
+  {id:'m1',cat:'fear',title:'Your fear is not a personality flaw.',truth:'You didn\'t "become weak." Your nervous system was trained over years to associate being seen with danger. It learned: attention = threat, speaking = embarrassment. So it protects you by shutting you down. That shaking, that blank mind? Your system doing its job too well. It\'s not you failing. It\'s conditioning.',reflect:'What\'s one specific moment from the past that taught your body that being seen is dangerous? Name it.'},
+  {id:'m2',cat:'fear',title:'You can\'t think your way out of a feeling your body learned.',truth:'The fear doesn\'t live in your logic. It lives in your nervous system. That\'s why "I know I\'m safe" doesn\'t stop the shaking. Your thinking brain can know you\'re fine. Your survival brain doesn\'t care — it fires before you can think. You don\'t fight it. You retrain it through repetition.',reflect:'Next time fear hits, instead of arguing with it — what if you just said: "Yeah, I expected you." How does that change things?'},
+  {id:'m3',cat:'fear',title:'Trying to turn fear off by force doesn\'t work.',truth:'When you\'re alone and try to "feel afraid" nothing happens — because your survival system isn\'t triggered. But in front of people it fires automatically. You can\'t override automatic responses with willpower. You can only replace them with new evidence, repeated enough times that your brain updates its prediction.',reflect:'Stop trying to be fearless. What would it look like to be brave AND shaking at the same time?'},
+  {id:'m4',cat:'rewire',title:'Your brain has two systems. Only one listens to you.',truth:'Thinking brain: logic, intention — "I\'m safe." Survival brain: automatic, faster than thought — reacts before you decide. When you\'re exposed, the survival system takes over. Heart races. Hands shake. Mind blanks. That system doesn\'t ask for permission. You don\'t beat it. You train it the same way it was trained against you — through repetition.',reflect:'What\'s one small daily action that would start feeding the survival brain new evidence that you\'re safe?'},
+  {id:'m5',cat:'rewire',title:'The wiring can be changed. Not by decision — by reps.',truth:'Exposure isn\'t about not feeling fear. It\'s about staying in the discomfort long enough for your brain to update: "Nothing bad happened." At first: 100% fear. After reps: 70% → 40% → 10%. Eventually the trigger doesn\'t fire the same way. Not because you decided to be calm. Because your brain accumulated enough evidence.',reflect:'Think about one thing you\'re already not afraid of that you once were. How did that shift happen?'},
+  {id:'m6',cat:'rewire',title:'Porn doesn\'t just affect your urges. It rewires your baseline.',truth:'Years of compulsive use trains the brain toward easy dopamine. Real-world effort becomes harder. Anxiety increases because the brain constantly expects a shortcut and doesn\'t find one. Confidence erodes not from laziness — but from a nervous system accustomed to reward without discomfort. You can\'t fix confidence while feeding that loop daily.',reflect:'What\'s one thing in your real life that got harder to enjoy because the brain got used to something easier?'},
+  {id:'m7',cat:'identity',title:'You are not the version of you that\'s been conditioned.',truth:'The version of you that hides, shakes, and goes quiet — that\'s a trained response, not your identity. The fact that you speak well in private, think clearly, and want change proves the real version is already there. It\'s just buried under conditioning and habits. You are not broken. You are untrained.',reflect:'Who were you before you learned to make yourself small? What do you remember about that version?'},
+  {id:'m8',cat:'identity',title:'The real you already exists. Fear is just covering him.',truth:'You said it yourself: you can speak in private. Think clearly alone. That means the capacity is there. The fear doesn\'t replace who you are — it mutes you temporarily. The work isn\'t to become someone new. It\'s to stop disappearing every time you\'re seen. That version is closer than you think.',reflect:'If fear was gone tomorrow — not a little less, completely gone — what\'s the first thing you\'d do differently?'},
+  {id:'m9',cat:'identity',title:'Being seen is not the same as being judged.',truth:'Your brain learned to treat visibility as a threat. So now even neutral attention feels like surveillance. But most people are too caught up in their own inner noise to scrutinize you the way you fear. The judgment you\'re hiding from mostly exists inside you, not outside. The audience isn\'t as large or as harsh as your nervous system believes.',reflect:'Think of the last time you judged someone harshly just for existing in a room. Did that actually happen?'},
+  {id:'m10',cat:'bounce',title:'A slip is data, not a verdict.',truth:'Every relapse, every missed day, every "I didn\'t do the rep" — it\'s not proof that you\'re weak. It\'s information. What was happening before it? What time of day? What emotion? What trigger? The person who logs it honestly and asks those questions is further along than the person who pretends it didn\'t happen.',reflect:'What pattern do you notice about when you slip? Be specific — time, mood, what preceded it.'},
+  {id:'m11',cat:'bounce',title:'Paul said: "I do what I don\'t want to do." He still wrote most of the New Testament.',truth:'Romans 7 is Paul describing his own internal war — doing the thing he hates, not doing the thing he loves. He didn\'t resolve it through willpower. He resolved it through identity shift: "It is no longer I who do it, but sin living in me." He named it. He got back up. He didn\'t let the struggle define his output.',reflect:'What would change if you stopped seeing your struggle as your identity and started seeing it as just the war — one you\'re still fighting?'},
+  {id:'m12',cat:'bounce',title:'The man who falls and gets back up is stronger than the man who never fell.',truth:'Every reset builds resilience if you use it right. The fall is not the end of the story — the return is. What makes a man is not whether he stayed clean for 6 months straight. It\'s whether, after the slip at 3am, he woke up the next morning and did the first habit anyway. That\'s character.',reflect:'After your last slip, how fast did you get back up? What could you do to make that window shorter next time?'},
+  {id:'m13',cat:'consistency',title:'Confidence comes after the reps. Not before.',truth:'You\'re waiting to feel ready before you act. That\'s the trap. Confidence is the result of doing the thing you were afraid of, enough times, and surviving it. The feeling follows the action — never the other way. The man waiting to feel ready will wait forever. The man who acts uncomfortable is building the feeling with every rep.',reflect:'Name one thing you\'ve been postponing until you "feel ready." What\'s the smallest possible version of that action you could do today?'},
+  {id:'m14',cat:'consistency',title:'Motivation is a guest. Discipline is the house.',truth:'You can\'t build anything on motivation because motivation leaves whenever it wants. It depends on mood, sleep, circumstances. Discipline is what runs the system when motivation is gone. And discipline isn\'t forced — it\'s built through small daily reps done before you feel like doing them. The days you don\'t feel it and show up anyway are the ones that build the most.',reflect:'What\'s one habit you\'d do today even if you felt terrible? That\'s where your real foundation is.'},
+  {id:'m15',cat:'consistency',title:'Small and daily beats big and occasional every time.',truth:'Your brain changes through frequency, not intensity. One massive effort every two weeks builds less than one small rep every day. The body learns through repetition — not episodes. This is why the plan is about daily minimums: 1 social action, 1 physical movement, 1 habit reduced. These aren\'t goals. They\'re reps on a machine that rewires you.',reflect:'What is one action so small that even on your worst day you could still do it? That\'s your non-negotiable.'},
+  {id:'m16',cat:'fear',title:'Shame wants you to hide. Growth wants you to show up.',truth:'After a slip, shame says: stay quiet, disappear, you don\'t deserve to be here. That voice is a liar. Shame keeps the loop running by isolating you. Growth says: log it, name it, show up the next morning, do the first habit anyway. The antidote to shame isn\'t perfection. It\'s accountability followed by action.',reflect:'What does shame usually tell you to do after a hard day? What would accountability tell you to do instead?'},
+  {id:'m17',cat:'identity',title:'You can\'t hate yourself into becoming someone better.',truth:'Self-criticism feels productive because it\'s intense. But intensity is not the same as effectiveness. Studies show that self-compassion after failure leads to more effort and fewer future slips than self-punishment does. The internal voice that calls you weak is not your coach. It\'s the same system trying to keep you small.',reflect:'What would you tell a close friend who was going through exactly what you\'re going through right now?'},
+  {id:'m18',cat:'rewire',title:'Your brain is not fixed. It is always updating.',truth:'Neuroplasticity means your brain literally reshapes itself based on what you repeatedly do. Every time you avoid, the avoidance pathway gets stronger. Every time you stay in the discomfort, the "nothing bad happened" pathway gets built. You are not locked into who you are today. You are building tomorrow\'s default responses right now.',reflect:'What is one thing you\'ve already changed about yourself in the last few years — proof that your brain updates?'},
+  {id:'m19',cat:'bounce',title:'You don\'t need a perfect past. You need the next right move.',truth:'The idea that you have to "start clean" to matter is a trap. The slate doesn\'t need to be blank for today to count. You relapsed yesterday and did 5 habits today? That is the story of a man becoming. Progress is not a straight line. It\'s a direction. Stay pointed the right way.',reflect:'If this week didn\'t count toward anything, what would you do differently? Now ask yourself why it actually does count.'},
+  {id:'m20',cat:'consistency',title:'The reps you do when nobody is watching are the ones that change you.',truth:'Nobody will see you pray at 6am. Nobody will see you put the phone down and pick up a book. Nobody will see you do the 50 push-ups when you\'re exhausted. But your nervous system sees every rep. Your brain records every time you chose the harder thing. Character is built in private. Reputation is just the shadow it eventually casts.',reflect:'What\'s one thing you do consistently in private that the best version of you would do? Build on that.'}
 ];
 
 let mindFilter='all';
+// FIX: Always start from index 0 — don't jump to middle
 let mindFeaturedIdx=0;
 
-function initMindFeatured(){
-  const now=new Date();
-  mindFeaturedIdx=(now.getDate()+now.getMonth()*7)%MIND_THOUGHTS.length;
-}
-
 function renderMind(){
-  initMindFeatured();
   renderMindFeatured();
   renderMindFilters();
   renderMindCards();
@@ -1590,14 +1753,12 @@ function renderMind(){
 function renderMindFeatured(){
   const t=MIND_THOUGHTS[mindFeaturedIdx];
   const cat=MIND_CATS[t.cat];
-  document.getElementById('mh-category').textContent=cat.label.toUpperCase()+' · DAY '+(mindFeaturedIdx+1)+' OF '+MIND_THOUGHTS.length;
-  document.getElementById('mh-day-label').textContent='TODAY\'S DEEP THOUGHT';
+  document.getElementById('mh-category').textContent=cat.label.toUpperCase()+' · THOUGHT '+(mindFeaturedIdx+1)+' OF '+MIND_THOUGHTS.length;
+  document.getElementById('mh-day-label').textContent='DEEP THOUGHT';
   document.getElementById('mh-quote').textContent=t.title;
   document.getElementById('mh-truth').textContent=t.truth;
   document.getElementById('mh-reflect-q').textContent=t.reflect;
-  // dots
   const dotsEl=document.getElementById('mh-dots');
-  const total=Math.min(MIND_THOUGHTS.length,20);
   dotsEl.innerHTML='';
   for(let i=0;i<MIND_THOUGHTS.length;i++){
     const dot=document.createElement('div');
@@ -1648,7 +1809,7 @@ function renderMindCards(){
         <div class="mc-tag" style="color:${cat.color}">${cat.label.toUpperCase()}</div>
         <div class="mc-title">${t.title}</div>
       </div>
-      <div class="mc-read-btn${isRead?' done':''}" onclick="event.stopPropagation();toggleMindRead('${t.id}')" title="Mark reflected">
+      <div class="mc-read-btn${isRead?' done':''}" onclick="event.stopPropagation();toggleMindRead('${t.id}')">
         <svg viewBox="0 0 10 10" fill="none" stroke="${isRead?'#fff':'var(--ink3)'}" stroke-width="2.5" width="9" height="9"><polyline points="1.5,5 4,7.5 8.5,2.5"/></svg>
       </div>
     </div>
@@ -1669,7 +1830,6 @@ function toggleMindCard(id){
   if(idx>-1)S.mindExpanded.splice(idx,1);else S.mindExpanded.push(id);
   save();renderMindCards();
 }
-
 function toggleMindRead(id){
   if(!S.mindRead)S.mindRead=[];
   const idx=S.mindRead.indexOf(id);
