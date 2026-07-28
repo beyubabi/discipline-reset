@@ -35,6 +35,9 @@ html,body{width:100%;min-height:100dvh;overflow-x:hidden;font-family:'Inter',san
 .tab{flex-shrink:0;padding:8px 13px;border-radius:8px 8px 0 0;background:none;border:1px solid transparent;border-bottom:none;margin-bottom:-1px;font-size:10px;font-weight:600;color:var(--t3);cursor:pointer;transition:all .18s;font-family:'DM Mono',monospace;letter-spacing:.1em;text-transform:uppercase}
 .tab.on{color:var(--amber);background:var(--card);border-color:var(--br)}
 .tab:active{transform:scale(0.95)}
+.tab-emergency{background:linear-gradient(135deg,#e74c3c,#c0392b)!important;color:#fff!important;border-radius:50px!important;font-weight:800!important;border:none!important;padding:8px 14px!important;box-shadow:0 2px 14px rgba(231,76,60,0.45);animation:tabalarm 1.8s ease-in-out infinite}
+.tab-emergency.on{background:linear-gradient(135deg,#e74c3c,#c0392b)!important;color:#fff!important}
+@keyframes tabalarm{0%,100%{box-shadow:0 2px 14px rgba(231,76,60,0.45)}50%{box-shadow:0 2px 22px rgba(231,76,60,0.85)}}
 .page{display:none}.page.on{display:block}
 .wrap{max-width:480px;margin:0 auto;padding:16px 14px 100px}
 .hero{background:linear-gradient(135deg,#0f1c2e,#0a1118);border:1px solid rgba(245,166,35,0.13);border-radius:var(--r);padding:22px;margin-bottom:14px;position:relative;overflow:hidden;box-shadow:var(--shl)}
@@ -166,8 +169,13 @@ html,body{width:100%;min-height:100dvh;overflow-x:hidden;font-family:'Inter',san
 .tact{margin-top:12px;padding:12px 14px;background:var(--gdim);border-radius:9px;border-left:2.5px solid var(--green)}
 .tactl{font-family:'DM Mono',monospace;font-size:8px;letter-spacing:.16em;color:var(--green);margin-bottom:5px;text-transform:uppercase}
 .tactt{font-size:12px;color:var(--t);line-height:1.55}
-.ubtn{display:block;width:100%;padding:17px;background:var(--red);color:#fff;border:none;border-radius:var(--r);font-size:14px;font-family:'Space Grotesk',sans-serif;font-weight:700;cursor:pointer;margin-bottom:12px;transition:all .2s;box-shadow:0 4px 20px rgba(231,76,60,0.3)}
-.ubtn:active{opacity:.85;transform:scale(0.98)}
+.ubtn{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;padding:20px;background:linear-gradient(135deg,#e74c3c,#c0392b);color:#fff;border:none;border-radius:var(--r);font-size:14px;font-family:'Space Grotesk',sans-serif;font-weight:800;letter-spacing:.03em;text-transform:uppercase;cursor:pointer;margin-bottom:12px;transition:all .2s;box-shadow:0 4px 24px rgba(231,76,60,0.4);animation:alarmpulse 2s ease-in-out infinite}
+.ubtn.open{animation:none;background:var(--card2);color:var(--t);box-shadow:var(--sh)}
+.ubtn:active{opacity:.85;transform:scale(0.97)}
+.ubtn .abell{font-size:18px;flex-shrink:0;animation:alarmshake 1.4s ease-in-out infinite}
+.ubtn.open .abell{animation:none}
+@keyframes alarmpulse{0%,100%{box-shadow:0 4px 24px rgba(231,76,60,0.4)}50%{box-shadow:0 4px 34px rgba(231,76,60,0.75)}}
+@keyframes alarmshake{0%,100%{transform:rotate(0)}10%{transform:rotate(-12deg)}20%{transform:rotate(10deg)}30%{transform:rotate(-8deg)}40%{transform:rotate(6deg)}50%{transform:rotate(0)}}
 .usteps{display:none;flex-direction:column;gap:6px;margin-bottom:14px}
 .usteps.open{display:flex}
 .ustep{display:flex;align-items:flex-start;gap:12px;background:var(--card);border:1px solid var(--br);border-radius:var(--r);padding:14px;box-shadow:var(--sh)}
@@ -303,6 +311,7 @@ html,body{width:100%;min-height:100dvh;overflow-x:hidden;font-family:'Inter',san
 .pvnote{font-size:12px;color:var(--t3);line-height:1.6;margin-bottom:10px;font-style:italic}
 .pvbtn{width:100%;padding:11px;background:var(--gdim);border:1px solid var(--gmid);color:var(--green);border-radius:var(--rs);font-size:12px;font-family:'Space Grotesk',sans-serif;font-weight:700;cursor:pointer}
 .pvbtn:disabled{opacity:.5;cursor:default}
+.loadwrap{display:flex;align-items:center;justify-content:center;gap:8px;padding:40px 0;color:var(--t3);font-family:'DM Mono',monospace;font-size:11px;letter-spacing:.1em}
 </style>
 </head>
 <body>
@@ -330,7 +339,7 @@ html,body{width:100%;min-height:100dvh;overflow-x:hidden;font-family:'Inter',san
   <div class="tab" onclick="nav('plan',this)">Plan</div>
   <div class="tab" onclick="nav('stats',this)">Stats</div>
   <div class="tab" onclick="nav('mind',this)">Mind</div>
-  <div class="tab" onclick="nav('triggers',this)">Triggers</div>
+  <div class="tab tab-emergency" id="alarmtab" onclick="nav('triggers',this)">&#x1F6A8; TRIGGER</div>
   <div class="tab" onclick="nav('review',this)">Review</div>
 </div>
 <div class="page on" id="pg-home"><div class="wrap">
@@ -348,6 +357,10 @@ html,body{width:100%;min-height:100dvh;overflow-x:hidden;font-family:'Inter',san
       <div class="hcell"><div class="hcell-n" id="hnl">0</div><div class="hcell-l">DAYS LEFT</div></div>
     </div>
   </div>
+  <div class="pbox" id="idbox" style="border-color:rgba(245,166,35,0.3);border-left-color:var(--amber);background:var(--aglow);cursor:pointer" onclick="nextIdentity()">
+    <div class="p-eye" style="color:var(--amber)">WHO YOU ARE &#x2014; TAP TO BE REMINDED</div>
+    <div class="p-q" id="idtxt" style="color:#f5d6a0"></div>
+  </div>
   <div class="pbox"><div class="p-eye">TODAY'S QUESTION</div><div class="p-q" id="pq"></div></div>
   <div class="gcrd">
     <div class="gh" onclick="toggleG()"><span class="gt">&#x1F4C8; 7-Day Performance</span><button class="gtog" id="gbtn">Expand &#x25BE;</button></div>
@@ -360,7 +373,7 @@ html,body{width:100%;min-height:100dvh;overflow-x:hidden;font-family:'Inter',san
   <div id="rstatus"></div>
   <button class="rbtn" id="rbtn" onclick="openRM()">I watched porn / masturbated today</button>
   <div class="ccrd">
-    <div class="cc-top"><div class="cc-t">Shopify course progress</div><div class="cc-pct" id="cpct">0%</div></div>
+    <div class="cc-top"><div class="cc-t" id="cctitle">Shopify course progress</div><div class="cc-pct" id="cpct">0%</div></div>
     <div class="bb"><div class="bf" id="barf" style="width:0%"></div></div>
     <div class="crow"><input class="cinp" type="number" id="minsin" placeholder="Minutes watched today" min="1" max="180" inputmode="numeric"/><button class="cbtn" onclick="addMins()">Log</button></div>
     <div class="cmeta" id="cmeta">0 / 1080 min</div>
@@ -402,7 +415,7 @@ html,body{width:100%;min-height:100dvh;overflow-x:hidden;font-family:'Inter',san
 </div></div>
 <div class="page" id="pg-triggers"><div class="wrap">
   <div class="sec" style="margin-top:6px"><div class="sec-l">URGE RESPONSE</div></div>
-  <button class="ubtn" id="ubtn" onclick="toggleUrge()">I'm feeling an urge &#x2014; activate response</button>
+  <button class="ubtn" id="ubtn" onclick="toggleUrge()"><span class="abell">&#x1F6A8;</span><span id="ubtntxt">I'm feeling an urge</span></button>
   <div class="usteps" id="usteps">
     <div class="ustep"><div class="unum">1</div><div><div class="utitle">Stand up immediately</div><div class="usub">Get your body moving right now</div></div></div>
     <div class="ustep"><div class="unum">2</div><div><div class="utitle">Leave the room &#x2014; change environment</div><div class="usub">Break the physical loop</div></div></div>
@@ -433,9 +446,20 @@ html,body{width:100%;min-height:100dvh;overflow-x:hidden;font-family:'Inter',san
   <div class="rtsec"><div class="rth"><div class="rttl">This week's accountability log</div><div id="rtlbl" style="font-family:'DM Mono',monospace;font-size:10px"></div></div><div id="rentries"></div><div id="rchart" style="margin-top:12px"></div></div>
   <div class="sec" style="margin-top:18px"><div class="sec-l">PAST REVIEWS</div><div class="sec-r" id="rcount"></div></div>
   <div id="prvwrap"></div>
+  <div class="sec" style="margin-top:18px"><div class="sec-l">PROGRAMS</div><div class="sec-r" id="progcount"></div></div>
+  <div class="sp-intro">Start something with a defined first day and last day. Track it day by day until it's done — then it's done, not another open-ended habit.</div>
+  <div id="progwrap"></div>
+  <div class="bkcrd"><div class="bkt">Start a new program</div><div class="crow" style="margin-top:0"><input class="cinp" type="text" id="pgname" placeholder="Program name" style="flex:2"/><input class="cinp" type="number" id="pgdays" placeholder="Days" min="1" max="365" style="flex:1" inputmode="numeric"/></div><button class="cbtn" style="width:100%;margin-top:8px;height:42px" onclick="addProgram()">Start program</button></div>
   <div class="sec" style="margin-top:18px"><div class="sec-l">PROVERBS &#x2014; ONE CHAPTER A WEEK</div><div class="sec-r" id="pvprog"></div></div>
-  <div class="sp-intro">Slow it down. One chapter, one week, meditate daily. Don't rush 31 chapters &#x2014; let one sink in.</div>
+  <div class="sp-intro">Three verses a day. Read them, ask what it says about God and what it says about you, one sentence takeaway. Don't rush — but don't let it go quiet again either.</div>
   <div id="pvwrap"></div>
+  <div class="prvcrd" style="margin-bottom:14px">
+    <div class="prvh" onclick="document.getElementById('pvsetbody').classList.toggle('open')"><div class="prvw">Not at the right spot? Set it</div><div class="prvs">&#x25be;</div></div>
+    <div class="prvb" id="pvsetbody">
+      <div class="pvnote">Tell it the next chapter:verse you're actually reading today, and it'll pick up from there.</div>
+      <div class="crow"><input class="cinp" type="number" id="pvch" placeholder="Chapter (1-31)" min="1" max="31" style="flex:1" inputmode="numeric"/><input class="cinp" type="number" id="pvvs" placeholder="Verse" min="1" style="flex:1" inputmode="numeric"/><button class="cbtn" onclick="setProverbsPosition()">Set</button></div>
+    </div>
+  </div>
   <div class="sec" style="margin-top:18px"><div class="sec-l">SPIRITUAL GROWTH PLAN</div><div class="sec-r" id="spprog"></div></div>
   <div class="sp-intro">Fix the foundation &#x2192; identity &#x2192; relationship &#x2192; mindset. Read small. Apply one thing daily.</div>
   <div class="sp-phase" id="sp-phase-1"><div class="sp-ph" onclick="togglePhase('sp-phase-1')"><div class="sp-pi">&#x1F525;</div><div class="sp-pinfo"><div class="sp-ptitle">Phase 1 &#x2014; Identity</div><div class="sp-psub">Who you actually are</div></div><div class="sp-ppct" id="pct-1"></div><div class="sp-chev">&#x25BE;</div></div><div class="sp-pbody"><div class="sp-fix">Fixes: "I don't know who I am" and "I'm not enough."</div><div class="sp-passes" id="passages-1"></div></div></div>
@@ -458,11 +482,23 @@ const PROFILE={
   practices:['50 push-ups daily','journaling, saved as documents toward future books','Bible study — Proverbs, Psalms, Romans, Ephesians','learning chess','HP EliteBook, builds Shopify/WordPress stores'],
   faith:'Christian; believes courage is staying despite fear, not the absence of fear; believes confidence comes after repeated obedience, not before it.'
 };
+const IDENTITY=[
+  "You are not the shaking hands. You raised your CGPA from 2.90 to 3.70 after your first year fell apart — you already know how to rebuild something that looked finished.",
+  "SwiftGlamour pays you N100k a month to build their store. That is not luck landing on you. That is patience you already put in, from a pink laptop that barely worked to an EliteBook that does.",
+  "It's me versus me. Nobody else is running this race for you, and nobody else can lose it for you either. That means the outcome is still yours to decide.",
+  "You watched a man at the Media Place hold a microphone and sing with full confidence, disability and all. You wrote it yourself: disability starts in the mind. So does the opposite of it.",
+  "The audience you're afraid of is mostly in your head. You said it yourself — the fear was never really about performing, it was about being evaluated. Naming that is most of the work.",
+  "Being afraid is biology. Fear is what happens when you let being afraid make the decision. You already know the difference — you wrote a whole revelation about it during your birthday fast.",
+  "Debt made you feel like a slave to the lender. It didn't make you one. You're still the man choosing to build, choosing diligence over promises — that's the part debt can't touch.",
+  "Knowledge plus action equals power, in your own words. You don't need more information about who you are. You need to act like you already know.",
+  "You've already done the identity-rebuild once — from a man who skipped class to play PES, to a man who built a real Shopify business. That man isn't gone. That's still who you're capable of being.",
+  "When you wake up feeling like a stranger to yourself, that's not evidence something is wrong with you. It's a Tuesday. The version of you who wrote these journals is still in there — go find him again by doing the next small thing."
+];
 const PROMPTS=["Nobody in church is watching you. They're fighting their own silent war. What would you do today if you truly believed that?","You said you're full of surprises. Name one thing you've been hiding from yourself that you're actually capable of.","What's one fear you've been calling 'being realistic'?","If the version of you from 6 months ahead came back, what's the first thing he'd tell you to stop doing?","What does the man you want to become do at 2pm when he's bored and alone?","You've relapsed. You've restarted. What does that tell you about who you actually are?","Discipline isn't motivation. What's one thing you can do today that doesn't require feeling ready?","What are you escaping when you pick up your phone with no purpose?","A slip is not a slide. You logged it. You're back. What's the very next small action?","The man you're becoming doesn't need a perfect past. He just needs the next right move.","Paul said 'I do what I don't want to do.' He still wrote most of the New Testament. What does that tell you?","Shame wants you to hide. Accountability wants you to grow. Which one are you choosing today?","Your trembling hand held a pen in school. What did it draw? That was still you.","The moringa is growing in your yard. What else is right in front of you that you're not using?","When you are alone and calm, you are exactly who you want to be. What would it mean to bring that person into the world?","Fifty push-ups a day is not exercise. It is a man speaking to his own body: I am not done becoming.","What would change tomorrow if you slept before midnight every night for 30 days?","God said the fruit is for you. What else has He put in your environment that you haven't used yet?","You said the debt makes you feel like a slave. What's one thing today that's fully in your control, debt or not?","After eating tonight, what will you do instead of reaching for a movie?","You learned web design, Shopify, WordPress, football — none of that came easy at first. What does that prove about chess, or anything else you're starting now?"];
 const HABITS=[
   {id:'prayer',n:'Prayer / quiet reflection',s:'Set your mind before the day',block:'morning'},
   {id:'pushups',n:'50 push-ups',s:"You've done 60. This is easy for you now.",block:'morning'},
-  {id:'study',n:'Skill study / Shopify',s:'30 min — anything that compounds',block:'midday'},
+  {id:'study',n:'Skill study',s:'30 min — anything that compounds',block:'midday'},
   {id:'reading',n:'10 pages',s:'Any book that builds you',block:'evening'},
   {id:'journal',n:'10 min journaling',s:"Write it, don't just think it",block:'evening'},
   {id:'chess',n:'Chess practice',s:'A puzzle or a game — just keep learning',block:'evening'},
@@ -471,20 +507,36 @@ const HABITS=[
   {id:'noporn',n:'No porn · No M',s:'The one that matters most tonight',block:'night'}
 ];
 const TBLOCKS={morning:{label:'MORNING',color:'#F5A623'},midday:{label:'MIDDAY',color:'#2ecc71'},evening:{label:'EVENING',color:'#5B7FE8'},night:{label:'NIGHT',color:'#8B5CF6'}};
-const BLOCKS=[{id:'morning',label:'MORNING',color:'#F5A623',tasks:['Wake up at same time','Prayer / quiet reflection','Cold shower or cold water on face','50 push-ups']},{id:'midday',label:'MIDDAY',color:'#2ecc71',tasks:['Work / learning session','Shopify course (30 min)','Moringa + turmeric (food or tea)']},{id:'evening',label:'EVENING',color:'#5B7FE8',tasks:['Reading (10 pages)','10 min journaling','10 min reflection','Chess puzzle','Eat fruit']},{id:'night',label:'NIGHT',color:'#8B5CF6',tasks:['Wash face + moisturize','Eat, then walk away from screens — no movie into sleep','Phone out of the bedroom','Screens off 30 min before bed','Sleep before midnight']}];
-const PROVERBS_CH=31;
+const BLOCKS=[{id:'morning',label:'MORNING',color:'#F5A623',tasks:['Wake up at same time','Prayer / quiet reflection','Cold shower or cold water on face','50 push-ups']},{id:'midday',label:'MIDDAY',color:'#2ecc71',tasks:['Work / learning session','Shopify course (30 min)']},{id:'evening',label:'EVENING',color:'#5B7FE8',tasks:['Reading (10 pages)','10 min journaling','10 min reflection','Chess puzzle']},{id:'night',label:'NIGHT',color:'#8B5CF6',tasks:['Wash face + moisturize','Eat, then walk away from screens — no movie into sleep','Phone out of the bedroom','Screens off 30 min before bed','Sleep before midnight']}];
 const SPIRITUAL=[{phase:1,passages:[{id:'gen1',ref:'Genesis 1-3',note:'Where you came from + why everything feels broken'},{id:'ps139',ref:'Psalm 139',note:'You are not random, you are designed'},{id:'jer1',ref:'Jeremiah 1:4-10',note:'Purpose before birth'},{id:'eph1',ref:'Ephesians 1',note:'Your identity in Christ — read slowly'},{id:'1pet2',ref:'1 Peter 2:9',note:'Who you are now'}]},{phase:2,passages:[{id:'2tim1',ref:'2 Timothy 1:7',note:'You quoted it — now understand it'},{id:'phil4',ref:'Philippians 4:4-9',note:'The practical system to kill anxiety'},{id:'isa41',ref:'Isaiah 41:10',note:"God's response to fear"},{id:'rom12',ref:'Romans 12:1-2',note:'Transformation happens in the mind'},{id:'ps23',ref:'Psalm 23',note:'Security, not hype'}]},{phase:3,passages:[{id:'mat6',ref:'Matthew 6:25-33',note:'Seek first... not results first'},{id:'luk10',ref:'Luke 10:38-42',note:'Martha vs Mary — doing vs being'},{id:'joh15',ref:'John 15',note:'Connection to the source'},{id:'hos6',ref:'Hosea 6:6',note:'God wants relationship, not empty actions'},{id:'mat7',ref:'Matthew 7:21-23',note:'The warning — read it carefully'}]},{phase:4,passages:[{id:'gal5',ref:'Galatians 5:16-26',note:'The war inside you'},{id:'rom7',ref:'Romans 7',note:"Paul himself struggled — you're not crazy"},{id:'rom8',ref:'Romans 8',note:'Victory over that struggle'},{id:'col3',ref:'Colossians 3',note:'Practical way to live it out'}]}];
 const MCATS={fear:{label:'Fear & Anxiety',color:'#5B7FE8',dot:'#5B7FE8'},identity:{label:'Identity',color:'#F5A623',dot:'#F5A623'},rewire:{label:'Body & Brain',color:'#2ecc71',dot:'#2ecc71'},bounce:{label:'Bounce Back',color:'#e74c3c',dot:'#e74c3c'},consistency:{label:'Consistency',color:'#8B5CF6',dot:'#8B5CF6'}};
 const MT=[{id:'m1',cat:'fear',title:"Your fear is not a personality flaw.",truth:"You didn't 'become weak.' Your nervous system was trained over years to associate being seen with danger. It learned: attention = threat, speaking = embarrassment. So it protects you by shutting you down. That shaking, that blank mind? Your system doing its job too well. It's not you failing. It's conditioning.",reflect:"What's one specific moment from the past that taught your body being seen is dangerous? Name it."},{id:'m2',cat:'fear',title:"You can't think your way out of a feeling your body learned.",truth:"The fear doesn't live in your logic. It lives in your nervous system. That's why 'I know I'm safe' doesn't stop the shaking. Your thinking brain can know you're fine. Your survival brain doesn't care — it fires before you can think. You don't fight it. You retrain it through repetition.",reflect:"Next time fear hits, instead of arguing with it — what if you just said: 'Yeah, I expected you.' How does that change things?"},{id:'m3',cat:'rewire',title:"Your brain has two systems. Only one listens to you.",truth:"Thinking brain: logic, intention — 'I'm safe.' Survival brain: automatic, faster than thought. When you're exposed, the survival system takes over. Heart races. Hands shake. Mind blanks. That system doesn't ask for permission. You don't beat it by willpower. You train it the same way it was trained against you — through repetition.",reflect:"What's one small daily action that would start feeding the survival brain new evidence that you're safe?"},{id:'m4',cat:'rewire',title:"Porn doesn't just affect your urges. It rewires your baseline.",truth:"Years of compulsive use trains the brain toward easy dopamine. Real-world effort becomes harder. Anxiety increases because the brain constantly expects a shortcut. Confidence erodes not from laziness — but from a nervous system accustomed to reward without discomfort. You can't fix confidence while feeding that loop daily.",reflect:"What's one thing in your real life that got harder to enjoy because the brain got used to something easier?"},{id:'m5',cat:'identity',title:"You are not the version of you that's been conditioned.",truth:"The version of you that hides, shakes, and goes quiet — that's a trained response, not your identity. The fact that you speak well in private, think clearly, and want change proves the real version is already there. It's just buried under conditioning and habits. You are not broken. You are untrained.",reflect:"Who were you before you learned to make yourself small? What do you remember about that version?"},{id:'m6',cat:'identity',title:"Being seen is not the same as being judged.",truth:"Your brain learned to treat visibility as a threat. Most people are too caught up in their own inner noise to scrutinize you the way you fear. The judgment you're hiding from mostly exists inside you, not outside. The audience isn't as large or as harsh as your nervous system believes.",reflect:"Think of the last time you judged someone harshly just for existing in a room. Did that actually happen?"},{id:'m7',cat:'bounce',title:"A slip is data, not a verdict.",truth:"Every relapse, every missed day — it's not proof that you're weak. It's information. What was happening before it? What time of day? What emotion? What trigger? The person who logs it honestly and asks those questions is further along than the person who pretends it didn't happen.",reflect:"What pattern do you notice about when you slip? Be specific — time, mood, what preceded it."},{id:'m8',cat:'bounce',title:"Paul said: I do what I don't want to do. He still wrote most of the New Testament.",truth:"Romans 7 is Paul describing his own internal war — doing the thing he hates, not doing the thing he loves. He didn't resolve it through willpower. He resolved it through identity shift. He named it. He got back up. He didn't let the struggle define his output.",reflect:"What would change if you stopped seeing your struggle as your identity and started seeing it as just the war — one you're still fighting?"},{id:'m9',cat:'bounce',title:"The man who falls and gets back up is stronger than the man who never fell.",truth:"Every reset builds resilience if you use it right. The fall is not the end of the story — the return is. What makes a man is not whether he stayed clean for 6 months straight. It's whether, after the slip at 3am, he woke up the next morning and did the first habit anyway. That's character.",reflect:"After your last slip, how fast did you get back up? What could you do to make that window shorter next time?"},{id:'m10',cat:'consistency',title:"Confidence comes after the reps. Not before.",truth:"You're waiting to feel ready before you act. That's the trap. Confidence is the result of doing the thing you were afraid of, enough times, and surviving it. The feeling follows the action — never the other way. The man waiting to feel ready will wait forever.",reflect:"Name one thing you've been postponing until you feel ready. What's the smallest possible version you could do today?"},{id:'m11',cat:'consistency',title:"Motivation is a guest. Discipline is the house.",truth:"You can't build anything on motivation because motivation leaves whenever it wants. It depends on mood, sleep, circumstances. Discipline is what runs the system when motivation is gone. The days you don't feel it and show up anyway are the ones that build the most.",reflect:"What's one habit you'd do today even if you felt terrible? That's where your real foundation is."},{id:'m12',cat:'rewire',title:"The wiring can be changed. Not by decision — by reps.",truth:"Exposure isn't about not feeling fear. It's about staying in the discomfort long enough for your brain to update: 'Nothing bad happened.' At first 100% fear. After reps: 70% to 40% to 10%. Eventually the trigger doesn't fire the same way. Not because you decided to be calm. Because your brain accumulated enough evidence.",reflect:"Think about one thing you're already not afraid of that you once were. How did that shift happen?"},{id:'m13',cat:'identity',title:"You can't hate yourself into becoming someone better.",truth:"Self-criticism feels productive because it's intense. But intensity is not the same as effectiveness. Self-compassion after failure leads to more effort and fewer future slips than self-punishment does. The internal voice that calls you weak is not your coach. It's the same system trying to keep you small.",reflect:"What would you tell a close friend who was going through exactly what you're going through right now?"},{id:'m14',cat:'consistency',title:"The reps you do when nobody is watching are the ones that change you.",truth:"Nobody will see you pray at 6am. Nobody will see you put the phone down and pick up a book. Nobody will see you do the 50 push-ups when you're exhausted. But your nervous system sees every rep. Your brain records every time you chose the harder thing. Character is built in private.",reflect:"What's one thing you do consistently in private that the best version of you would do? Build on that."},{id:'m15',cat:'fear',title:"Shame wants you to hide. Growth wants you to show up.",truth:"After a slip, shame says: stay quiet, disappear, you don't deserve to be here. That voice is a liar. Shame keeps the loop running by isolating you. Growth says: log it, name it, show up the next morning, do the first habit anyway. The antidote to shame isn't perfection. It's accountability followed by action.",reflect:"What does shame usually tell you to do after a hard day? What would accountability tell you to do instead?"},{id:'m16',cat:'rewire',title:"Your brain is not fixed. It is always updating.",truth:"Every time you avoid, the avoidance pathway gets stronger. Every time you stay in the discomfort, the 'nothing bad happened' pathway gets built. You are not locked into who you are today. You are building tomorrow's default responses right now with every decision you make.",reflect:"What is one thing you've already changed about yourself in the last few years — proof that your brain updates?"},{id:'m17',cat:'bounce',title:"You don't need a perfect past. You need the next right move.",truth:"The idea that you have to start clean to matter is a trap. The slate doesn't need to be blank for today to count. You relapsed yesterday and did 5 habits today? That is the story of a man becoming. Progress is not a straight line. It's a direction. Stay pointed the right way.",reflect:"If this week didn't count toward anything, what would you do differently? Now ask yourself why it actually does count."},{id:'m18',cat:'identity',title:"The trembling hand is not the whole story.",truth:"They called you 'vibrator.' Children mock what they don't understand. But biology is not morality. A nervous system more sensitive than average picks up more — more emotion, more awareness, more creativity. The same wiring that shakes in crowds is the wiring that makes you feel things deeply. That is not a defect. That is design.",reflect:"What has your sensitivity allowed you to notice, feel, or understand that others might have missed?"},{id:'m19',cat:'consistency',title:"Small and daily beats big and occasional every time.",truth:"Your brain changes through frequency, not intensity. One massive effort every two weeks builds less than one small rep every day. The body learns through repetition — not episodes. These habits aren't goals. They're reps on a machine that rewires you.",reflect:"What is one action so small that even on your worst day you could still do it? That's your non-negotiable."},{id:'m20',cat:'fear',title:"You are not escaping fear. You are training it.",truth:"The goal was never to become a person who feels no fear. The goal is to become a person who acts in spite of it, repeatedly, until the nervous system updates its threat assessment. Every time you show up shaking and do it anyway — you are not just surviving. You are training. The next rep will be 1% easier.",reflect:"What would it look like to treat your fear as a training partner, not an enemy?"}];
 const FQ=["The tree that survives the storm has roots the storm cannot see. Your trembling hands hold more strength than those who never had to fight.","God planted moringa, turmeric, and soursop in your yard before you knew you needed them. He also planted the strength to overcome this before you knew you'd need it.","The boys who called you 'vibrator' were naming something they couldn't understand. You were always more sensitive to this world than they were — that is not weakness. That is design.","Your hand shakes because you feel more than most. Do not ask God to remove the sensitivity. Ask Him to show you what it was placed there to do.","Fifty push-ups a day is not exercise. It is a man speaking to his own body, saying: I am not done becoming.","The soil doesn't ask the seed why it's taking so long. It just holds it, feeds it, and waits. You are in the ground right now. This season is not failure. It is formation.","Six months from today, a man will look in the mirror and he will not be you — he will be who you chose to become. Choose today.","You called debt a cage. A man can be in a cage and still be building the key. Keep building.","You traded a pink laptop dream for an EliteBook reality. The next trade is already in motion — don't quit mid-trade.","Chess does not punish you for being new. It only punishes you for not moving. Make the move."];
-function def(){return{wins:[],streak:0,totalMins:0,checked:[],todos:{morning:[],midday:[],evening:[],night:[]},habitMisses:{},habitDoneByDay:{},reviews:[],spRead:[],relapses:[],mindRead:[],mindExpanded:[],mindIdx:0,lastExport:null,lastCheckedDate:null,proverbsCh:0,proverbsWeekStart:null,proverbsLastMarkedWeek:null}}
-function load(){try{const d=JSON.parse(localStorage.getItem(KEY)||'{}');return Object.assign(def(),d);}catch{return def();}}
-function save(){localStorage.setItem(KEY,JSON.stringify(S));updBK();}
-let S=load(),gExp=false,urgeOpen=false,tInt=null,tSecs=600,mFil='all';
+const PROVERBS_VERSES=[33,22,35,27,23,35,27,36,18,32,31,28,25,35,33,33,28,24,29,30,31,29,35,34,28,28,27,28,27,33,31];
+const PROVERBS_TOTAL=915;
+function proverbsRef(pos){let acc=0;for(let c=0;c<PROVERBS_VERSES.length;c++){if(pos<=acc+PROVERBS_VERSES[c])return (c+1)+':'+(pos-acc);acc+=PROVERBS_VERSES[c];}return '31:31';}
+function def(){return{wins:[],streak:0,totalMins:0,checked:[],todos:{morning:[],midday:[],evening:[],night:[]},habitMisses:{},habitDoneByDay:{},reviews:[],spRead:[],relapses:[],mindRead:[],mindExpanded:[],mindIdx:0,lastExport:null,lastCheckedDate:null,recentQuotes:[],programs:[],identityIdx:0,proverbsVerse:0,proverbsLastMarkedDate:null,proverbsDates:[]}}
+async function load(){
+  try{
+    const r=await window.storage.get('progress',false);
+    return r? Object.assign(def(),JSON.parse(r.value)) : def();
+  }catch(e){
+    return def();
+  }
+}
+async function save(){
+  try{
+    const r=await window.storage.set('progress',JSON.stringify(S),false);
+    if(!r) console.error('Storage set returned null');
+  }catch(e){
+    console.error('Storage error:',e);
+  }
+  updBK();
+}
+let S=def(),gExp=false,urgeOpen=false,tInt=null,tSecs=600,mFil='all';
 const today=new Date().toISOString().slice(0,10);
 function updBK(){const el=document.getElementById('bknote');if(el){const l=S.lastExport?new Date(S.lastExport).toLocaleDateString():'never';el.textContent='Last export: '+l+' \u00b7 Auto-saves on every tap.';}}
 function autoClose(){if(!S.habitDoneByDay)S.habitDoneByDay={};const lcd=S.lastCheckedDate;if(lcd&&lcd!==today&&S.checked&&S.checked.length>0){S.habitDoneByDay[lcd]=S.checked.slice();S.checked=[];}S.lastCheckedDate=today;save();}
-autoClose();
 function nav(id,tab){document.querySelectorAll('.page').forEach(p=>p.classList.remove('on'));document.querySelectorAll('.tab').forEach(t=>t.classList.remove('on'));document.getElementById('pg-'+id).classList.add('on');tab.classList.add('on');if(id==='home')render();if(id==='stats')renderStats();if(id==='plan')renderPlan();if(id==='review')renderReview();if(id==='mind')renderMind();}
 function render(){
   const now=new Date();
@@ -498,12 +550,18 @@ function render(){
   document.getElementById('hnw').textContent=S.wins.length;
   document.getElementById('snum').textContent=S.streak||0;
   document.getElementById('pq').textContent=PROMPTS[(now.getDate()+now.getMonth()*3)%PROMPTS.length];
+  if(S.identityIdx==null)S.identityIdx=0;
+  document.getElementById('idtxt').textContent=IDENTITY[S.identityIdx%IDENTITY.length];
   if(!S.checked)S.checked=[];
   renderHabits();renderTodayProg();renderTodayR();renderWeekG();
   const pct=Math.min(100,Math.round(((S.totalMins||0)/1080)*100));
+  const courseDone=(S.totalMins||0)>=1080;
   document.getElementById('cpct').textContent=pct+'%';
   document.getElementById('barf').style.width=pct+'%';
-  document.getElementById('cmeta').textContent=(S.totalMins||0)+' / 1080 min \u00b7 '+Math.ceil(Math.max(0,1080-(S.totalMins||0))/60)+' hrs remaining';
+  document.getElementById('cctitle').textContent=courseDone?'Shopify course \u2014 completed \u2713':'Shopify course progress';
+  document.getElementById('minsin').disabled=courseDone;
+  document.getElementById('minsin').placeholder=courseDone?'Course complete':'Minutes watched today';
+  document.getElementById('cmeta').textContent=courseDone?'1080 / 1080 min \u00b7 done \u2014 the "Skill study" habit is now open for whatever you pick up next':(S.totalMins||0)+' / 1080 min \u00b7 '+Math.ceil(Math.max(0,1080-(S.totalMins||0))/60)+' hrs remaining';
   const won=S.wins.includes(today);const btn=document.getElementById('logbtn');
   btn.textContent=won?'Today logged \u2713':'Mark today complete';btn.disabled=won;
   won?btn.classList.add('won'):btn.classList.remove('won');
@@ -525,8 +583,11 @@ function renderHabits(){
     items.forEach((h)=>{
       const i=HABITS.indexOf(h);
       const isDone=S.checked.includes(h.id);const isMissed=(S.habitMisses||{})[today]&&S.habitMisses[today].includes(h.id);
+      const shopifyDone=(S.totalMins||0)>=1080;
+      const dispName=(h.id==='study')?(shopifyDone?'Skill study':'Skill study / Shopify'):h.n;
+      const dispSub=(h.id==='study'&&shopifyDone)?'Shopify course completed — pick your next skill':h.s;
       if(isDone)done++;const d=document.createElement('div');d.className='habit'+(isDone?' done':isMissed?' missed':'');d.dataset.id=h.id;d.onclick=()=>tog(d);
-      d.innerHTML=`<div class="hck"><svg class="tick" viewBox="0 0 10 10" fill="none" stroke="#0a0a0a" stroke-width="2.5" width="11" height="11"><polyline points="1.5,5 4,7.5 8.5,2.5"/></svg><span class="mx">\u2715</span></div><div class="hb"><div class="hn">${h.n}</div><div class="hsub">${h.s}</div></div><div class="hnum">${String(i+1).padStart(2,'0')}</div>`;
+      d.innerHTML=`<div class="hck"><svg class="tick" viewBox="0 0 10 10" fill="none" stroke="#0a0a0a" stroke-width="2.5" width="11" height="11"><polyline points="1.5,5 4,7.5 8.5,2.5"/></svg><span class="mx">\u2715</span></div><div class="hb"><div class="hn">${dispName}</div><div class="hsub">${dispSub}</div></div><div class="hnum">${String(i+1).padStart(2,'0')}</div>`;
       list.appendChild(d);
     });
   });
@@ -539,6 +600,7 @@ function tog(el){
   else{S.habitMisses[today]=S.habitMisses[today].filter(x=>x!==id);}
   save();renderHabits();renderTodayProg();renderWeekG();
 }
+function nextIdentity(){S.identityIdx=((S.identityIdx||0)+1)%IDENTITY.length;save();document.getElementById('idtxt').textContent=IDENTITY[S.identityIdx];}
 function toggleG(){gExp=!gExp;document.getElementById('gbody').classList.toggle('exp',gExp);document.getElementById('gbtn').textContent=gExp?'Collapse \u25b4':'Expand \u25be';}
 function renderWeekG(){
   const c=document.getElementById('gbars');const tot=HABITS.length;const days=[];
@@ -558,12 +620,12 @@ function renderTodayR(){
   if(tr){btn.textContent="Update today's log";btn.style.borderStyle='solid';se.innerHTML=`<div class="rlogged show"><div class="rl-l">LOGGED TODAY</div>${tr.what?`<div class="rl-t">What happened: ${tr.what}</div>`:''} ${tr.next?`<div class="rl-t" style="margin-top:4px;color:var(--green)">Next time: ${tr.next}</div>`:''}<div class="rl-t" style="margin-top:8px;font-style:italic;color:var(--t3);font-size:12px">"The man who falls and gets up is stronger than the man who never fell."</div></div>`;}
   else{btn.textContent='I watched porn / masturbated today';btn.style.borderStyle='dashed';se.innerHTML='';}
 }
-function addMins(){const v=parseInt(document.getElementById('minsin').value)||0;if(v<=0)return;S.totalMins=Math.min(1080,(S.totalMins||0)+v);document.getElementById('minsin').value='';save();render();}
+function addMins(){if((S.totalMins||0)>=1080)return;const v=parseInt(document.getElementById('minsin').value)||0;if(v<=0)return;const was=(S.totalMins||0);S.totalMins=Math.min(1080,was+v);document.getElementById('minsin').value='';save();render();if(S.totalMins>=1080&&was<1080)showToast('Shopify course complete \ud83c\udf89 Skill study is open for whatever\u2019s next');}
 function logDay(){
   if(S.wins.includes(today))return;S.wins.push(today);if(!S.habitDoneByDay)S.habitDoneByDay={};S.habitDoneByDay[today]=S.checked.slice();
   const y=new Date();y.setDate(y.getDate()-1);const ys=y.toISOString().slice(0,10);S.streak=S.wins.includes(ys)?(S.streak||0)+1:1;S.checked=[];save();render();showToast('Win logged \ud83d\udd25 Streak: '+S.streak);
 }
-function resetAll(){if(confirm('Reset all progress? Cannot be undone.')){localStorage.removeItem(KEY);S=def();render();}}
+async function resetAll(){if(confirm('Reset all progress? Cannot be undone.')){try{await window.storage.delete('progress',false);}catch(e){}S=def();render();}}
 function renderPlan(){
   const now=new Date();const D=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];const M=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
   document.getElementById('pdate').textContent=D[now.getDay()]+', '+now.getDate()+' '+M[now.getMonth()];
@@ -603,7 +665,7 @@ function renderPDList(){
     wrap.appendChild(card);
   });
 }
-function toggleUrge(){urgeOpen=!urgeOpen;document.getElementById('usteps').classList.toggle('open',urgeOpen);document.getElementById('ubtn').textContent=urgeOpen?'Close urge response':"I'm feeling an urge \u2014 activate response";}
+function toggleUrge(){urgeOpen=!urgeOpen;document.getElementById('usteps').classList.toggle('open',urgeOpen);document.getElementById('ubtn').classList.toggle('open',urgeOpen);document.getElementById('ubtntxt').textContent=urgeOpen?'Close \u2014 I\u2019m handling it':"I'm feeling an urge";}
 function startTimer(){
   const btn=document.getElementById('timerbtn');if(tInt){clearInterval(tInt);tInt=null;tSecs=600;btn.textContent='Start 10-minute timer';btn.classList.remove('running');return;}
   btn.classList.add('running');tInt=setInterval(()=>{tSecs--;const m=Math.floor(tSecs/60),s=tSecs%60;btn.textContent=m+':'+(s<10?'0':'')+s+' remaining \u2014 tap to cancel';if(tSecs<=0){clearInterval(tInt);tInt=null;tSecs=600;btn.textContent='Timer done \u2014 urge passed \u2713';btn.classList.remove('running');}},1000);
@@ -619,7 +681,7 @@ function renderReview(){
   document.getElementById('rcount').textContent=past.length>0?past.length+' saved':'';const pw=document.getElementById('prvwrap');pw.innerHTML='';
   if(past.length===0){pw.innerHTML='<div style="font-size:13px;font-style:italic;color:var(--t3);padding:6px 0">No past reviews yet.</div>';}
   else{past.forEach(r=>{const card=document.createElement('div');card.className='prvcrd';card.innerHTML=`<div class="prvh" onclick="this.nextElementSibling.classList.toggle('open')"><div class="prvw">${getWL(r.week)}</div><div class="prvs">${r.score?r.score+'/7':''} \u25be</div></div><div class="prvb">${r.q1?`<div class="prvaq">DID YOU FOLLOW YOUR SYSTEM?</div><div class="prvaa">${r.q1}</div>`:''} ${r.q2?`<div class="prvaq">WHAT TRIGGERED YOU?</div><div class="prvaa">${r.q2}</div>`:''} ${r.q3?`<div class="prvaq">ONE CHANGE NEXT WEEK</div><div class="prvaa">${r.q3}</div>`:''}</div>`;pw.appendChild(card);});}
-  renderRT();renderSP();renderPV();updBK();
+  renderRT();renderSP();renderPV();renderPrograms();updBK();
 }
 function saveReview(){
   if(!S.reviews)S.reviews=[];const wk=getWK();const sd=document.querySelector('.sdot.sel');const score=sd?parseInt(sd.textContent):null;const q1=document.getElementById('rvq1').value.trim();const q2=document.getElementById('rvq2').value.trim();const q3=document.getElementById('rvq3').value.trim();const idx=S.reviews.findIndex(r=>r.week===wk);const review={week:wk,score,q1,q2,q3,savedAt:new Date().toISOString()};if(idx>-1)S.reviews[idx]=review;else S.reviews.push(review);save();renderReview();showToast('Review saved \u2713');
@@ -640,25 +702,66 @@ function renderSP(){
   SPIRITUAL.forEach(ph=>{const done=ph.passages.filter(p=>S.spRead.includes(p.id)).length;td+=done;ta+=ph.passages.length;document.getElementById('pct-'+ph.phase).textContent=done+'/'+ph.passages.length;const wrap=document.getElementById('passages-'+ph.phase);wrap.innerHTML='';ph.passages.forEach(p=>{const ir=S.spRead.includes(p.id);const row=document.createElement('div');row.className='sp-pass'+(ir?' read':'');row.setAttribute('data-pid',p.id);row.onclick=()=>togglePass(p.id);row.innerHTML=`<div class="sp-cb">${ir?'<svg viewBox="0 0 10 10" fill="none" stroke="#0a0a0a" stroke-width="2.5" width="10" height="10"><polyline points="1.5,5 4,7.5 8.5,2.5"/></svg>':''}</div><div><div class="sp-ref">${p.ref}</div><div class="sp-note">${p.note}</div></div>`;wrap.appendChild(row);});});
   document.getElementById('spprog').textContent=td+'/'+ta+' read';
 }
-function pvCurrentWeekStart(){return getWK();}
+function addProgram(){
+  const nameEl=document.getElementById('pgname');const daysEl=document.getElementById('pgdays');
+  const name=nameEl.value.trim();const days=parseInt(daysEl.value)||0;
+  if(!name||days<=0){showToast('Give it a name and a day count.');return;}
+  if(!S.programs)S.programs=[];
+  S.programs.push({id:'pg'+Date.now(),name,totalDays:days,startDate:today,doneDates:[]});
+  nameEl.value='';daysEl.value='';save();renderPrograms();showToast('Program started \u2014 Day 1 of '+days);
+}
+function progDay(p){const start=new Date(p.startDate+'T12:00:00');const now=new Date(today+'T12:00:00');const diff=Math.floor((now-start)/864e5);return Math.min(p.totalDays,Math.max(1,diff+1));}
+function toggleProgDay(id){
+  const p=S.programs.find(x=>x.id===id);if(!p)return;if(!p.doneDates)p.doneDates=[];
+  const idx=p.doneDates.indexOf(today);if(idx>-1)p.doneDates.splice(idx,1);else p.doneDates.push(today);
+  save();renderPrograms();
+}
+function deleteProgram(id){if(!confirm('Remove this program? Its history goes with it.'))return;S.programs=(S.programs||[]).filter(p=>p.id!==id);save();renderPrograms();}
+function renderPrograms(){
+  if(!S.programs)S.programs=[];
+  document.getElementById('progcount').textContent=S.programs.length?S.programs.length+' active':'';
+  const wrap=document.getElementById('progwrap');wrap.innerHTML='';
+  if(!S.programs.length){wrap.innerHTML='<div style="font-size:13px;font-style:italic;color:var(--t3);padding:6px 0 12px">No program running. Start one below.</div>';return;}
+  S.programs.forEach(p=>{
+    const day=progDay(p);const pct=Math.round((day/p.totalDays)*100);const done=day>=p.totalDays;const markedToday=(p.doneDates||[]).includes(today);
+    const card=document.createElement('div');card.className='pvcrd';
+    card.innerHTML=`<div class="pvh"><div class="pvt">${p.name}${done?' \u2014 complete \u2713':''}</div><div class="pvw">Day ${day}/${p.totalDays}</div></div><div class="pvbb"><div class="pvbf" style="width:${pct}%"></div></div><div class="crow"><button class="pvbtn" style="flex:1" ${done?'disabled':''} onclick="toggleProgDay('${p.id}')">${markedToday?'Today logged \u2713':'Mark today done'}</button><button class="bkbtn imp" style="flex:0 0 70px" onclick="deleteProgram('${p.id}')">Remove</button></div>`;
+    wrap.appendChild(card);
+  });
+}
+function setProverbsPosition(){
+  const ch=parseInt(document.getElementById('pvch').value);
+  const vs=parseInt(document.getElementById('pvvs').value);
+  if(!ch||ch<1||ch>31){showToast('Chapter has to be 1-31.');return;}
+  if(!vs||vs<1||vs>PROVERBS_VERSES[ch-1]){showToast('Proverbs '+ch+' only has '+PROVERBS_VERSES[ch-1]+' verses.');return;}
+  let pos=0;for(let c=0;c<ch-1;c++)pos+=PROVERBS_VERSES[c];
+  pos+=vs-1;
+  S.proverbsVerse=Math.max(0,pos);
+  S.proverbsLastMarkedDate=null;
+  document.getElementById('pvch').value='';document.getElementById('pvvs').value='';
+  document.getElementById('pvsetbody').classList.remove('open');
+  save();renderPV();showToast('Set \u2014 next up: Proverbs '+ch+':'+vs);
+}
 function renderPV(){
-  if(S.proverbsCh==null)S.proverbsCh=0;
-  const wk=pvCurrentWeekStart();
-  const alreadyMarkedThisWeek=S.proverbsWeekStart===wk&&S.proverbsLastMarkedWeek===wk;
-  if(S.proverbsWeekStart!==wk){S.proverbsWeekStart=wk;save();}
-  const ch=Math.min(S.proverbsCh+1,PROVERBS_CH);
-  document.getElementById('pvprog').textContent=S.proverbsCh+'/'+PROVERBS_CH+' chapters';
+  if(S.proverbsVerse==null)S.proverbsVerse=0;
+  const done=S.proverbsVerse>=PROVERBS_TOTAL;
+  const markedToday=S.proverbsLastMarkedDate===today;
+  const pct=Math.round((S.proverbsVerse/PROVERBS_TOTAL)*100);
+  document.getElementById('pvprog').textContent=S.proverbsVerse+'/'+PROVERBS_TOTAL+' verses';
   const wrap=document.getElementById('pvwrap');if(!wrap)return;
-  const done=S.proverbsCh>=PROVERBS_CH;
-  const canMark=!done&&!alreadyMarkedThisWeek;
-  const btnLabel=done?'All 31 chapters read':canMark?'Mark chapter '+ch+' as read this week':'Chapter '+ch+' already marked this week';
-  wrap.innerHTML=`<div class="pvcrd"><div class="pvh"><div class="pvt">${done?'Proverbs complete \u2713':'This week: Proverbs '+ch}</div><div class="pvw">${getWL(wk)}</div></div><div class="pvbb"><div class="pvbf" style="width:${Math.round((S.proverbsCh/PROVERBS_CH)*100)}%"></div></div><div class="pvnote">Read it slowly. Ask: what does this say about God, what does this say about me? One sentence takeaway, one thing applied this week.</div><button class="pvbtn" ${(!canMark)?'disabled':''} onclick="markProverbs()">${btnLabel}</button></div>`;
+  const nowRef=done?'31:31':proverbsRef(S.proverbsVerse+1);
+  const streak=(function(){let s=0;let d=new Date(today+'T12:00:00');while((S.proverbsDates||[]).includes(d.toISOString().slice(0,10))){s++;d.setDate(d.getDate()-1);}return s;})();
+  const btnLabel=done?'Proverbs complete \u2014 all 915 verses':markedToday?'Today logged \u2713':'Mark today\u2019s 3 verses read';
+  wrap.innerHTML=`<div class="pvcrd"><div class="pvh"><div class="pvt">${done?'Proverbs complete \u2713':'Next up: Proverbs '+nowRef}</div><div class="pvw">${streak>0?streak+'-day streak':''}</div></div><div class="pvbb"><div class="pvbf" style="width:${pct}%"></div></div><div class="pvnote">Read it slowly. Ask: what does this say about God, what does this say about me? One sentence takeaway, one thing applied today.</div><button class="pvbtn" ${(done||markedToday)?'disabled':''} onclick="markProverbs()">${btnLabel}</button></div>`;
 }
 function markProverbs(){
-  if(S.proverbsCh>=PROVERBS_CH)return;
-  const wk=pvCurrentWeekStart();
-  if(S.proverbsLastMarkedWeek===wk){showToast('Already marked this week. One chapter per week.');return;}
-  S.proverbsCh++;S.proverbsLastMarkedWeek=wk;save();renderPV();showToast('Proverbs '+S.proverbsCh+' logged \u2713');
+  if(S.proverbsVerse>=PROVERBS_TOTAL)return;
+  if(S.proverbsLastMarkedDate===today){showToast('Already logged today.');return;}
+  S.proverbsVerse=Math.min(PROVERBS_TOTAL,(S.proverbsVerse||0)+3);
+  S.proverbsLastMarkedDate=today;
+  if(!S.proverbsDates)S.proverbsDates=[];
+  if(!S.proverbsDates.includes(today))S.proverbsDates.push(today);
+  save();renderPV();showToast('3 verses logged \u2713 Proverbs '+proverbsRef(S.proverbsVerse));
 }
 function renderMind(){if(S.mindIdx==null)S.mindIdx=0;renderMF();renderMFils();renderMCards();}
 function renderMF(){
@@ -679,36 +782,62 @@ function renderMCards(){
 }
 function toggleMC(id){if(!S.mindExpanded)S.mindExpanded=[];const idx=S.mindExpanded.indexOf(id);if(idx>-1)S.mindExpanded.splice(idx,1);else S.mindExpanded.push(id);save();renderMCards();}
 function toggleMR(id){if(!S.mindRead)S.mindRead=[];const idx=S.mindRead.indexOf(id);if(idx>-1)S.mindRead.splice(idx,1);else S.mindRead.push(id);save();renderMCards();}
+const JOURNAL_FACTS=[
+  "raised his university CGPA from 2.90 to 3.70 (Second Class Lower to Second Class Upper) after a first year wrecked by playing PES instead of studying",
+  "landed SwiftGlamour, his first real ongoing Shopify client, on a N100k/month contract tied to sales performance",
+  "went from a barely-working pink laptop, borrowing friends' PCs, to owning an HP EliteBook — years of patience, not one lucky break",
+  "wrote his own theological distinction between 'being afraid' (biology) and 'fear' (letting it run him) during a birthday fast",
+  "is carrying about N64,000 in debt and described himself as feeling like 'a slave to the lender', while still choosing diligence over other people's promises",
+  "root-caused his performance anxiety to fear of evaluation, not fear of performing — 'the audience in my head'",
+  "watched a physically disabled man sing confidently at the Media Place in Akure and wrote that 'disability starts in the mind'",
+  "coined his own line: 'it is me versus me' — external circumstances don't define him, what happens internally does",
+  "his own framework: 'Knowledge + Action = Power' — knowledge that isn't acted on is wasted",
+  "wants unity in his family, a wish he ties to his father, Cisero"
+];
 async function fetchQ(){
   const el=document.getElementById('qtxt');el.innerHTML='<span class="ldots"><span></span><span></span><span></span></span>';
-  const prompt=`You are a deeply wise African elder-mentor speaking to a young African man, age ${PROFILE.age}.
-Here is what you know about him — use it, don't just generalize:
-- He is recovering from: ${PROFILE.struggles.join('; ')}.
-- He is working toward: ${PROFILE.goals.join('; ')}.
-- His daily practices: ${PROFILE.practices.join('; ')}.
-- His faith: ${PROFILE.faith}
-- He admits he has been inconsistent lately with his system/habits, and is rebuilding right now.
+  if(!S.recentQuotes)S.recentQuotes=[];
+  const avoid=S.recentQuotes.slice(-6);
+  const fact=JOURNAL_FACTS[Math.floor(Math.random()*JOURNAL_FACTS.length)];
+  const prompt=`You are a deeply wise African elder-mentor speaking to a young African man, age ${PROFILE.age}, named Bayo.
+This is a TRUE fact from his own journals, in his own words/story — build today's quote around THIS ONE fact, don't generalize across everything you know about him:
+"${fact}"
 
-Generate ONE daily quote for him. Rules:
-1. Deeply personal to HIS specific story — pick ONE specific detail above and build the quote around it, not a generic summary of all of them
-2. Food for thought — something that will stay with him all day
-3. Touches his soul — identity, strength, liberation, restarting, or God's design
-4. 2-3 sentences maximum
-5. Original — not a known quote
-6. Could come from a prophet, a grandfather, or God himself
+His broader context, for tone only, don't just list it: recovering from years of pornography use, performance anxiety with shaking hands when watched, past bullying tied to nervous-system sensitivity, financial pressure, a Christian faith where he believes courage is staying despite fear and confidence follows obedience rather than preceding it.
+
+Rules:
+1. Build the quote around the ONE fact given above, specifically — reference the real detail (the GPA numbers, the debt amount, the client name, the disabled singer, whatever it is), don't go generic
+2. 2-3 sentences maximum
+3. Original wording — not a known quote, not a Bible verse quoted directly
+4. Do NOT repeat these recent quotes or their phrasing: ${avoid.length?avoid.join(' | '):'(none yet)'}
 
 Reply ONLY with the quote. No label, no author, no preamble.`;
   try{
     const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-6',max_tokens:1000,messages:[{role:'user',content:prompt}]})});
     const data=await res.json();const text=data.content?.find(b=>b.type==='text')?.text;
-    if(text&&text.length>10){el.textContent=text;document.getElementById('qmeta').textContent='Generated for you \u00b7 '+new Date().toLocaleDateString();}else throw new Error();
-  }catch(e){el.textContent=FQ[Math.floor(Math.random()*FQ.length)];document.getElementById('qmeta').textContent='Daily wisdom';}
+    if(text&&text.length>10){
+      el.textContent=text;
+      document.getElementById('qmeta').textContent='Generated for you \u00b7 '+new Date().toLocaleDateString();
+      S.recentQuotes.push(text.slice(0,60));if(S.recentQuotes.length>10)S.recentQuotes=S.recentQuotes.slice(-10);save();
+    }else throw new Error();
+  }catch(e){
+    let pool=FQ.filter(q=>!S.recentQuotes.some(r=>q.startsWith(r.slice(0,20))));
+    if(!pool.length)pool=FQ;
+    const pick=pool[Math.floor(Math.random()*pool.length)];
+    el.textContent=pick;document.getElementById('qmeta').textContent='Daily wisdom';
+    S.recentQuotes.push(pick.slice(0,60));if(S.recentQuotes.length>10)S.recentQuotes=S.recentQuotes.slice(-10);save();
+  }
 }
 function exportD(){S.lastExport=new Date().toISOString();save();const blob=new Blob([JSON.stringify(S,null,2)],{type:'application/json'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download='arise_backup_'+today+'.json';a.click();URL.revokeObjectURL(url);showToast('Exported \u2713 Save that file safely.');}
 function importD(e){const file=e.target.files[0];if(!file)return;const reader=new FileReader();reader.onload=ev=>{try{const data=JSON.parse(ev.target.result);if(!data.wins)throw new Error();if(confirm('Restore this backup? Current data will be replaced.')){S=Object.assign(def(),data);save();render();showToast('Backup restored \u2713');}}catch{showToast('Could not read that file.');}};reader.readAsText(file);e.target.value='';}
 function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2200);}
-render();
-fetchQ();
+async function init(){
+  S=await load();
+  autoClose();
+  render();
+  fetchQ();
+}
+init();
 setInterval(()=>save(),60000);
 </script>
 </body>
